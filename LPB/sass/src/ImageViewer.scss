@@ -1,0 +1,85 @@
+//styling for images grid
+
+.imageviewer .x-panel-body{
+  background: green;
+  font: 11px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+}
+.imageviewer .thumb{
+  background: $lightest-color;
+  padding: 3px;
+  padding-bottom: 0;
+}
+
+.imageviewer .thumb-wrap{
+  float: left;
+  margin: 4px;
+  margin-right: 0;
+  padding: 5px;
+}
+
+.x-quirks .imageviewer .thumb {
+  padding-bottom: 3px;
+}
+
+.imageviewer .thumb img{
+  height: 150px;
+  width: 150px;
+}
+.imageviewer .thumb-wrap{
+  float: left;
+  margin: 4px;
+  margin-right: 0;
+  padding: 5px;
+}
+.imageviewer .thumb-wrap span {
+
+  display: block;
+  overflow: hidden;
+  text-align: center;
+  width: 140px; /* for ie to ensure that the text is centered */
+}
+
+.imageviewer .x-item-over{
+  color: $lightest-color;
+  border:1px solid $base-color;
+  background: lighten($base-color, 25%);
+  padding: 4px;
+}
+
+.imageviewer .x-item-selected{
+  color: $lightest-color;
+  background: #10629e;
+  border:1px solid $base-color;
+  padding: 4px;
+}
+.imageviewer .x-item-selected .thumb{
+  background: white;
+}
+
+.imageviewer .loading-indicator {
+  font-size:11px;
+  background-image:url('../../resources/themes/images/default/grid/loading.gif');
+  background-repeat: no-repeat;
+  background-position: left;
+  padding-left:20px;
+  margin:10px;
+}
+
+.x-view-selector {
+  position:absolute;
+  left:0;
+  top:0;
+  width:0;
+  border:1px dotted;
+  opacity: .5;
+  -moz-opacity: .5;
+  filter:alpha(opacity=50);
+  zoom:1;
+  background-color: lighten($base-color, 50%);
+  border-color: $base-color;
+}
+
+.ext-strict .ext-ie .x-tree .x-panel-bwrap{
+   position:relative;
+   overflow:hidden;
+ }

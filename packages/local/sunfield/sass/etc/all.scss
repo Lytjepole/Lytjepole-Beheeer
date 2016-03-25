@@ -1,0 +1,44 @@
+.imagedataviewer .thumb-wrap {
+  float: left;
+  margin: 4px;
+  margin-right: 0;
+  padding: 5px;
+}
+
+.imagedataviewer .x-view-over {
+  color: #fff;
+  border:1px solid $base-color;
+  background: lighten($base-color, 25%);
+  padding: 4px;
+}
+
+.imagedataviewer .x-item-selected {
+  color: #fff;
+  border: 1px solid $base-color;
+  background: $base-color;
+  padding: 4px;
+}
+
+.imagedataviewer .thumb-wrap span {
+  display: block;
+  overflow: hidden;
+  text-align: center;
+  width: 70px; /* for ie to ensure that the text is centered */
+}
+
+.infopanel .details {
+  padding: 2px;
+}
+
+.infopanel .details img {
+  border: 2px solid $base-color;
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 4px;
+  margin-left: auto;
+  margin-right: auto
+}
+
+.infopanel .details-info span {
+  display: block;
+}

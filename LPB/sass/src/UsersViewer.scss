@@ -1,0 +1,40 @@
+.usersviewer .thumb-wrap{
+  float: left;
+  margin: 4px;
+  margin-right: 0;
+  padding: 5px;
+  width: 275px;
+  @include border-radius(15px);
+}
+
+.usersviewer .name{
+  font-weight: bold;
+  font-size: 13px;
+  text-align: center;
+}
+
+.usersviewer .userthumbnail img{
+  border: 3px solid $panel-navigation-background-color;
+  @include border-radius(75px);
+  display: block;
+  margin: 0 auto;
+}
+
+.usersviewer .x-item-over{
+  color: $lightest-color;
+  border:1px solid $base-color;
+  background: lighten($base-color, 25%);
+  padding: 4px;
+}
+
+.usersviewer .x-item-selected{
+  color: $lightest-color;
+  background: #10629e;
+  border:1px solid $base-color;
+  border:1px solid $panel-navigation-background-color;
+  padding: 4px;
+}
+
+.usersviewer .x-item-selected .userthumbnail img{
+  border: 3px solid $panel-navigation-background-color;
+}

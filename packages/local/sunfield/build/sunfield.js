@@ -1,0 +1,1 @@
+Ext.define("Ext.ux.imageUploader.ImageUploader",{alias:"widget.imageuploader"});

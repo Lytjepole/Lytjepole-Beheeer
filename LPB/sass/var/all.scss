@@ -1,0 +1,32 @@
+/*
+ * This is is imported by virtue of "sass.var" in "app.json".
+ */
+
+$enable-font-awesome: dynamic(true);
+
+$base-color: darken(#157fcc, 10%);
+
+$panel-navigation-background-color: #32404e;
+$panel-navigation-item-line-height: 64px;
+$panel-navigation-item-text-color: #ADB3B8;
+
+$circle-border-radius:50%;
+$base-border-color: #ddd;
+$lightest-color:#fff;
+
+$button-toolbar-background-color: transparent;
+$button-toolbar-border-color: transparent;
+$button-toolbar-hover-background-color: #efefef;
+
+
+
+//Form and Toolbar Button UI colors
+
+$color-blue: #167abc;
+$color-soft-cyan: #03b4d5;
+$color-soft-blue: #2eadf5;
+$color-soft-green: #9cc96b;
+$color-soft-red: #e44959;
+$color-soft-purple: #925e8b;
+$color-gray: #949495;
+$color-green: #16b603;
