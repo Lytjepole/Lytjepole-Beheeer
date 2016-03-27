@@ -191,7 +191,7 @@ switch ($_GET['action']) {
             $database->query($sql);
         }
 
-        echo '{"success": true, "userimage":{"imageName":"kiekeboe"}}';
+        echo '{"success": true, "userimage":{"id": '.$database->insert_id.', "imageName":"kiekeboe"}}';
         break;
 //    case 'create': // create new image
 //        echo '{"success": false}';

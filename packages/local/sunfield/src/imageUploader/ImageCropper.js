@@ -128,8 +128,7 @@ Ext.define('Ext.sunfield.imageUploader.ImageCropper', {
         });
         store.sync({
             success: function (batch, options) {
-                console.log('image sync success', batch, options);
-                win.fireEvent('imageComplete', 'hallo');
+                console.log('image sync success');
                 win.destroy();
                 store.resumeEvents();
             },

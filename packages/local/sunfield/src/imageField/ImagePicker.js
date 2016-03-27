@@ -51,8 +51,13 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
                             imagesStore: 'UserImages'
                         });
                         win.show();
-                        win.on({
-                            imageAdded: {fn: this.onImageAdded, scope: this}
+                        store = Ext.getStore(win.imagesStore);
+                        console.log(store);
+                        store.addListener({
+                            add: function (store, records, index, eOpts) {
+                                //Ext.getCmp('infopanel').loadRecord(records[0]);
+                                Ext.getCmp('imagedataviewer').setSelection(records[0]);
+                            }
                         });
                     }
                 }]
@@ -65,6 +70,7 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
             items: [{
                 xtype: 'dataview',
                 cls: 'imagedataviewer',
+                id: 'imagedataviewer',
                 store: Ext.getStore(this.store),
                 overItemCls: 'x-view-over',
                 itemSelector: 'div.thumb-wrap',
@@ -89,10 +95,6 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
                         mru: Ext.Date.format(data.recentlyUsed, 'Y-m-d H:i:s')
                     });
                     return data;
-                },
-
-                onImageAdded: function (image) {
-                    console.log('kiekeboe', image);
                 }
             }]
         }, {
@@ -101,6 +103,7 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
             split: true,
             flex: 1,
             minWidth: 200,
+            id: 'infopanel',
             itemId: 'infopanel',
             cls: 'infopanel',
 
@@ -146,8 +149,8 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
         this.callParent(arguments);
     },
 
-    imageSelected: function (image) {
-        console.log(image);
+    onImageAdded: function (image) {
+        console.log('kiekeboe');
     },
 
     onSelectionChange: function (view, selections) {

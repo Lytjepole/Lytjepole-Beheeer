@@ -110,7 +110,7 @@ Ext.define('Ext.sunfield.imageUploader.ImageUploader', {
                 waitMsg: 'Afbeelding uploaden...',
                 success: function (fp, response) {
                     jsonData = Ext.JSON.decode(response.response.responseText);
-                    this.close();
+                    this.hide();
                     editor = Ext.create({
                         xtype: 'imageprepare',
                         tmpName: jsonData.data.tmpName,
@@ -128,20 +128,11 @@ Ext.define('Ext.sunfield.imageUploader.ImageUploader', {
                         imagesStore: me.imagesStore
                     });
                     editor.mask('Afbeelding voorbereiden...');
-                    editor.on({
-                        imageComplete: {fn: this.imageReady, scope: this}
-                    });
-                    //this.imageReady('sfsdaff');
                 },
                 failure: function (fp, response) {
                     console.log('upload failed');
                 }
             });
         }
-    },
-
-    imageReady: function (image) {
-        console.log('@@@');
-        this.fireEvent('imageAdded', image);
     }
 });

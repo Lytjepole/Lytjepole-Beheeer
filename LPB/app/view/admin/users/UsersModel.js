@@ -10,11 +10,11 @@ Ext.define('LPB.view.admin.users.UsersModel', {
             autoLoad: true,
             storeId: 'UserImages',
             model: 'LPB.model.UserImage',
-            remoteFilter: true
+            remoteFilter: true,
+            pageSize: 0
         },
 
         accessLevels: {
-            //autoLoad: true,
             storeId: 'AccessLevels',
             model: 'LPB.model.AccessLevel',
             data: [
@@ -23,15 +23,6 @@ Ext.define('LPB.view.admin.users.UsersModel', {
                 {id: 3, accessLevel: 3, description: 'User'}
             ]
         }
-        /*
-        A declaration of Ext.data.Store configurations that are first processed as binds to produce an effective
-        store configuration. For example:
-
-        users: {
-            model: 'Users',
-            autoLoad: true
-        }
-        */
     },
 
     data: {

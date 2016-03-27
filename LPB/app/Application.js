@@ -95,7 +95,6 @@ Ext.define('LPB.Application', {
                         page = 'user.User';
                         break;
                 }
-                console.log(page);
                 Ext.create('LPB.view.admin.Main', {
                     //xtype: page,
                     viewModel: {
@@ -110,6 +109,7 @@ Ext.define('LPB.Application', {
                     method: 'POST',
                     params: data
                 });
+                // todo: also set new cookie expire date
             },
             failure: function (response) {
                 console.log('invalid response');
