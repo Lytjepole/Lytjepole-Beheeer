@@ -87,7 +87,18 @@ Ext.define('LPB.view.admin.users.UsersController', {
 
     onAddUserFormSubmit: function (btn) {
         var me = this,
-            refs = me.getReferences();
+            refs = me.getReferences(),
+            form = refs.adduserform,
+            record = form.getForm().getRecord(),
+            values = form.getValues(),
+            user = Ext.create('LPB.model.User'),
+            store = refs.usersview.getStore();
+
+        console.log(refs, user, record);
+        if (form.isValid()) {
+            store.add(values);
+            store.sync();
+        }
     },
 
     onAddUserWindowBeforeClose: function (win) {
