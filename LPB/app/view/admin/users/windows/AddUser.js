@@ -147,7 +147,7 @@ Ext.define('LPB.view.admin.users.windows.AddUser', {
                 btn.up('window').close();
             }
         }, {
-            text: 'Opslaan',
+            text: 'Ok',
             formBind: true,
             listeners: {
                 click: 'onAddUserFormSubmit'

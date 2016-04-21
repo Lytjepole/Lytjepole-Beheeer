@@ -9,6 +9,7 @@ Ext.define('LPB.view.admin.users.Users', {
         'LPB.view.admin.users.UsersController',
         'LPB.view.admin.users.windows.EditUser',
         'LPB.view.admin.users.windows.AddUser',
+        'LPB.view.admin.users.windows.DeleteUserDialog',
         'Ext.form.FieldContainer'
     ],
 
@@ -27,7 +28,7 @@ Ext.define('LPB.view.admin.users.Users', {
         render: 'onUsersCardRender'
     },
 
-    layout: 'responsivecolumn',
+    layout: 'fit',
 
     dockedItems: [{
         xtype: 'toolbar',
@@ -69,6 +70,7 @@ Ext.define('LPB.view.admin.users.Users', {
         trackOver: true,
         itemSelector: 'div.thumb-wrap',
         overItemCls: 'x-item-over',
+        autoScroll: true,
 
         cls: 'usersviewer',
 

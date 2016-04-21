@@ -39,7 +39,7 @@ Ext.define('LPB.Application', {
         sessionHash = localStorage.getItem('lpbSessionHash');
         userId = localStorage.getItem('uid');
 
-        if ((loggedIn) && (sessionHash != null) && (userId != null)) {
+        if ((loggedIn) && (sessionHash !== null) && (userId !== null)) {
             console.log('values found');
             // step 2: localstorage set, check with database for valid session
             Ext.Ajax.request({

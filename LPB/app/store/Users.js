@@ -4,7 +4,7 @@ Ext.define('LPB.store.Users', {
     model: 'LPB.model.User',
 
     storeId: 'UsersStore',
-
+    pageSize: 0,
     autoLoad: false,
     remoteSort: true,
     remoteFilter: true
