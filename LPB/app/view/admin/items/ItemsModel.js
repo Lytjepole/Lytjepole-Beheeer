@@ -6,15 +6,13 @@ Ext.define('LPB.view.admin.items.ItemsModel', {
     alias: 'viewmodel.items',
 
     stores: {
-        /*
-        A declaration of Ext.data.Store configurations that are first processed as binds to produce an effective
-        store configuration. For example:
-
-        users: {
-            model: 'Items',
-            autoLoad: true
+        ItemImages: {
+            model: 'LPB.model.Image',
+            storeId: 'ItemImages',
+            pageSize: 0,
+            autoLoad: true,
+            remoteFilter: true
         }
-        */
     },
 
     data: {

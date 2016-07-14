@@ -54,7 +54,9 @@ Ext.define('LPB.view.admin.users.windows.EditUser', {
         }, {
             xtype: 'locationselect',
             fieldLabel: 'Zoek op kaart...',
-            form: 'adduserform'
+            form: 'edituserform',
+            latField: 'lat',
+            lngField: 'lng'
         }, {
             xtype: 'fieldcontainer',
             layout: 'hbox',
@@ -100,6 +102,7 @@ Ext.define('LPB.view.admin.users.windows.EditUser', {
         }, {
             name: 'enabled',
             xtype: 'checkboxfield',
+            uncheckedValue: false,
             fieldLabel: 'Vrijgeven',
             checked: true
         }, {
@@ -110,14 +113,12 @@ Ext.define('LPB.view.admin.users.windows.EditUser', {
             displayField: 'description',
             valueField: 'accessLevel',
             store: 'AccessLevels'
-            // bind: {
-            //     store: '{accessLevels}'
-            // }
         }, {
             fieldLabel: 'Afbeelding',
             name: 'imageId',
             xtype: 'imagefield',
-            store: 'UserImages'
+            store: 'UserImages',
+            imagesDir: 'resources/images/users/'
         }],
 
         buttons: [{

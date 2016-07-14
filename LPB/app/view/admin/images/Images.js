@@ -58,7 +58,7 @@ Ext.define('LPB.view.admin.images.Images', {
     }, {
         dock: 'bottom',
         xtype: 'pagingtoolbar',
-        store: 'LPB.store.Images',
+        store: 'ImagesStore',
         displayInfo: true
     }],
 
@@ -66,7 +66,7 @@ Ext.define('LPB.view.admin.images.Images', {
         responsiveCls: 'big-100, small-100',
         xtype: 'dataview',
         reference: 'imageViewer',
-        store: 'LPB.store.Images',
+        store: 'ImagesStore',
         autoScroll: false,
         trackOver: true,
         overItemCls: 'x-item-over',

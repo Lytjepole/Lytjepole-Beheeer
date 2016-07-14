@@ -35,14 +35,14 @@ Ext.define('LPB.view.admin.users.UsersController', {
     showEditUSerWindow: function (user) {
         var win = Ext.create('adminedituserwindow', {
             autoShow: true,
-            title: user.get('fullName')
+            title: 'Gebruiker "' + user.get('fullName') + '" wijzigen'
         });
         this.getView().add(win);
         this.getReferences().edituserform.getForm().loadRecord(user);
     },
 
     onEditUserWindowBeforeClose: function (win) {
-        console.log('win closing...');
+        //console.log('win closing...');
 
     },
 
@@ -52,7 +52,8 @@ Ext.define('LPB.view.admin.users.UsersController', {
             win = refs.edituserwindow,
             form = refs.edituserform.getForm(),
             values = form.getValues(),
-            record = form.getRecord();
+            record = form.getRecord(),
+            store = refs.usersview.getStore();
 
         if (form.isValid() && form.isDirty()) {
             //save changes
@@ -61,8 +62,22 @@ Ext.define('LPB.view.admin.users.UsersController', {
                 scope: me,
                 success: function () {
                     me.getView().remove(win);
+                },
+                failure: function (record, operation) {
+                    var response;
+                    response = Ext.decode(operation.getResponse().responseText);
+                    store.reload();
+                    Ext.toast({
+                        title: 'Opslaan mislukt:',
+                        closable: true,
+                        html: response.messages[0].user,
+                        align: 't',
+                        autoClose: false
+                    });
                 }
             });
+        } else {
+            me.getView().remove(win);
         }
     },
 
@@ -89,7 +104,6 @@ Ext.define('LPB.view.admin.users.UsersController', {
             form = refs.adduserform,
             record = form.getForm().getRecord(),
             values = form.getValues(),
-        //user = Ext.create('LPB.model.User'),
             newUser,
             store = refs.usersview.getStore();
         refs.adduserwindow.mask('Gegevens verwerken...');
@@ -149,7 +163,6 @@ Ext.define('LPB.view.admin.users.UsersController', {
             store = refs.usersview.getStore(),
             selection = refs.usersview.getSelectionModel().getSelection(),
             response;
-        //console.log(refs);
 
         this.getView().add(
             Ext.create('LPB.view.admin.users.windows.DeleteUserDialog', {
@@ -159,50 +172,6 @@ Ext.define('LPB.view.admin.users.UsersController', {
                 modal: true
             })
         );
-
-
-        // Ext.Msg.confirm({
-        //     title: 'Gebruiker verwijderen?',
-        //     message: 'Weet je zeker dat je gebruiker "' + selection[0].get('fullName') + '" wilt verwijderen?',
-        //     buttons: Ext.Msg.YESNOCANCEL,
-        //     icon: Ext.Msg.QUESTION,
-        //     fn: function (btn) {
-        //         if (btn === 'yes') {
-        //             selection[0].erase({
-        //                 params: {
-        //                     'currentUserId': currentUser.id
-        //                 },
-        //                 failure: function (record, operation) {
-        //                     // erase failed
-        //                     response = Ext.decode(operation.getResponse().responseText);
-        //                     store.reload();
-        //                     Ext.toast({
-        //                         title: 'Gebruiker verwijderen mislukt:',
-        //                         autoClose: false,
-        //                         html: '- ' + response.messages[0].user,
-        //                         align: 't',
-        //                         width: 400,
-        //                         closable: true,
-        //                         iconCls: 'fa fa-trash-o'
-        //                     });
-        //                     // Ext.Msg.show({
-        //                     //     title: 'Verwijderen mislukt',
-        //                     //     msg: 'Gebruiker "' + record.get('fullName') + '" kon niet worden verwijderd:<br />' + response.messages[0].user,
-        //                     //     icon: Ext.Msg.ERROR,
-        //                     //     buttons: Ext.Msg.OK
-        //                     // });
-        //                 },
-        //                 success: function (record, operation) {
-        //                     // do something if the erase succeeded
-        //                     console.log('success', record, operation);
-        //                 },
-        //                 callback: function (record, operation, success) {
-        //                     //console.log(record, operation, success);
-        //                 }
-        //             });
-        //         }
-        //     }
-        // });
     },
 
     onDeleteUserConfirmClick: function (btn) {

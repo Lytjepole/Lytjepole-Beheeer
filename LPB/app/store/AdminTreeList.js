@@ -51,6 +51,26 @@ Ext.define('LPB.store.AdminTreeList', {
             iconCls: 'right-icon x-fa fa-info',
             routeId: 'service'
         }, {
+            text: 'Onderhoud',
+            leaf: false,
+            routeId: 'maintenance',
+            iconCls: 'right-icon x-fa fa-cogs',
+            expanded: false,
+            selectable: false,
+            children: [{
+                text: 'Gebruikers',
+                view: 'maintenance.UserImages',
+                routeId: 'userimages',
+                iconCls: 'right-icon x-fa fa-users',
+                leaf: true
+            }, {
+                text: 'Locaties',
+                view: 'maintenance.LocationImages',
+                routeId: 'locationimages',
+                iconCls: 'right-icon x-fa fa-map-marker',
+                leaf: true
+            }]
+        }, {
             text: 'Statistieken',
             view: 'stats.Stats',
             leaf: true,

@@ -19,7 +19,8 @@ Ext.application({
         'Ext.layout.container.Anchor',
         'Ext.sunfield.imageUploader.ImageUploader',
         'Ext.sunfield.locationSelect.LocationSelect',
-        'Ext.sunfield.imageField.ImageField'
+        'Ext.sunfield.imageField.ImageField',
+        'Ext.sunfield.DateSlider'
     ]
 
     // The name of the initial view to create. With the classic toolkit this class

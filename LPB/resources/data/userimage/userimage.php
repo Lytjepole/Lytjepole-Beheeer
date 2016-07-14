@@ -267,7 +267,7 @@ switch ($_GET['action']) {
                     }
                     $filterArray[] = '`' . $filterData[$i]->property . '` ' . $operator . ' \'' . $filterData[$i]->value . '\' ';
                 }
-                $filterSql .= implode(' AND ', $filterArray);
+                $filterSql .= implode(' OR ', $filterArray);
             }
 
             $sql = "SELECT SQL_CALC_FOUND_ROWS id, imageName, imagePath, ownerId, recentlyUsed, artist FROM `userImages` " . $filterSql . " " . $sortSql . " " . $limitSql . "";

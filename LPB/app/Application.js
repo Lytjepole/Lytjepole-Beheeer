@@ -13,7 +13,13 @@ Ext.define('LPB.Application', {
         'User',
         'Image',
         'UserImage',
-        'AccessLevel'
+        'LocationImage',
+        'AccessLevel',
+        'Location',
+        'CalendarItem',
+        'MoreItem',
+        'Category',
+        'Group'
     ],
 
     stores: [
@@ -21,7 +27,12 @@ Ext.define('LPB.Application', {
         'LPB.store.AdminTreeList',
         'LPB.store.UserTreeList',
         'LPB.store.Images',
-        'LPB.store.Users'
+        'LPB.store.Users',
+        'LPB.store.Locations',
+        'Items',
+        'MoreItems',
+        'Categories',
+        'Groups'
     ],
 
     //defaultToken: 'home',
@@ -39,8 +50,7 @@ Ext.define('LPB.Application', {
         sessionHash = localStorage.getItem('lpbSessionHash');
         userId = localStorage.getItem('uid');
 
-        if ((loggedIn) && (sessionHash !== null) && (userId !== null)) {
-            console.log('values found');
+        if (loggedIn && (sessionHash !== null) && (userId !== null)) {
             // step 2: localstorage set, check with database for valid session
             Ext.Ajax.request({
                 scope: this,

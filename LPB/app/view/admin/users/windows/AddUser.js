@@ -133,7 +133,8 @@ Ext.define('LPB.view.admin.users.windows.AddUser', {
             value: 1,
             name: 'imageId',
             xtype: 'imagefield',
-            store: 'UserImages'
+            store: 'UserImages',
+            imagesDir: 'resources/images/users/'
         }],
 
         buttons: [{

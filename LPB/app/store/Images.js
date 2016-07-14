@@ -4,7 +4,7 @@
 Ext.define('LPB.store.Images', {
     extend: 'Ext.data.Store',
 
-    //storeId: 'Images',
+    storeId: 'ImagesStore',
     model: 'LPB.model.Image',
 
     autoLoad: false,

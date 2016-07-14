@@ -13,6 +13,7 @@ Ext.define('LPB.view.admin.images.ImagesController', {
     },
 
     onAddImageButtonClick: function (btn, opts) {
+        var win;
         win = Ext.create({
             xtype: 'imageuploader',
             autoShow: true,
@@ -25,7 +26,7 @@ Ext.define('LPB.view.admin.images.ImagesController', {
             minImageWidth: 600,
             minImageHeight: 600,
             imageProcessor: 'resources/data/image/image.php',
-            imagesStore: 'LPB.store.Images'
+            imagesStore: 'ImagesStore'
         });
 
         this.getView().add(win);

@@ -8,5 +8,13 @@ Ext.define('LPB.store.Items', {
     pageSize: 0,
     autoLoad: false,
     remoteSort: true,
-    remoteFilter: true
+    remoteFilter: true,
+
+    sorters: [{
+        property: 'title',
+        value: 'ASC'
+    }, {
+        property: 'endDate',
+        value: 'ASC'
+    }]
 });

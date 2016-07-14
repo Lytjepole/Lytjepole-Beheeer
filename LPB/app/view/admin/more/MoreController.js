@@ -10,5 +10,9 @@ Ext.define('LPB.view.admin.more.MoreController', {
      */
     init: function() {
 
+    },
+
+    onMoreGridAfterRender: function (grid) {
+        grid.getStore().load();
     }
 });

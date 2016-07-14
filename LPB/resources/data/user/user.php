@@ -49,7 +49,10 @@ function getImage($imageId, $database)
 
 function getAdminCount($database)
 {
-    return 1;
+    $sql = "SELECT * FROM `checkAdminCount`";
+    $result =$database->query($sql);
+    $count = mysqli_fetch_row($result);
+    return $count[0];
 }
 
 /**
@@ -144,6 +147,10 @@ function updateTemplates($userId, $toUserId, $database)
     return $msg;
 }
 
+function updateSession($userId, $accessLevel, $database) {
+
+}
+
 switch ($_GET['action']) {
     case 'create': // create new user
         // create new user in database
@@ -168,9 +175,9 @@ switch ($_GET['action']) {
             $enabled = $data[$i]->enabled;
             $autoPassGen = $data[$i]->autoPassGen;
             $imageId = $data[$i]->imageId;
-            $accessLevel = $data[$i]->accessLevel;
+            //$accessLevel = $data[$i]->accessLevel;
+            $accessLevel = 3; //make user on add
             $name = $data[$i]->name;
-            $accessLevel = $data[$i]->accessLevel;
 
             $image = getImage($imageId, $database);
 
@@ -219,14 +226,40 @@ switch ($_GET['action']) {
             $lng = $data[$i]->lng;
             $imageId = $data[$i]->imageId;
 
-            $sql = "UPDATE users SET imageId = '" . $imageId . "', lat = '" . $lat . "', lng = '" . $lng . "', accessLevel = '" . $accessLevel . "', fullName = '" . $fullName . "', street = '" . $street . "', number = '" . $number . "', zip = '" . $zip . "', city = '" . $city . "', phone = '" . $phone . "', email = '" . $email . "', enabled = '" . $enabled . "' WHERE id = '" . $userId . "'";
+            $user = getUser($userId, $database);
+            $currentAccessLevel = $user->accessLevel.' ';
 
-            $database->query($sql);
-            $image = getUserImage($imageId, $database);
-            echo '{"success": true, "user": [{"id":' . $userId . ', "imagePath":"' . $image->imagePath . '"}]}';
+            if ($currentAccessLevel != $accessLevel) {
+                // accesslevel changed update session
+                updateSession($userId, $accessLevel, $database);
+            }
+
+            try {
+                if (getAdminCount($database) == 1 && $currentAccessLevel == 1 && $accessLevel != 1) {
+                    throw new Exception('Er moet minimaal 1 administrator actief zijn!');
+                }
+
+                if ($currentAccessLevel == 1 && $enabled === false) {
+                    throw new Exception('Administrators kunnen niet geblokkeerd worden');
+                }
+
+                // save changes in database
+                $sql = "UPDATE users SET imageId = '" . $imageId . "', lat = '" . $lat . "', lng = '" . $lng . "', accessLevel = '" . $accessLevel . "', fullName = '" . $fullName . "', street = '" . $street . "', number = '" . $number . "', zip = '" . $zip . "', city = '" . $city . "', phone = '" . $phone . "', email = '" . $email . "', enabled = '" . $enabled . "' WHERE id = '" . $userId . "'";
+
+                $database->query($sql);
+                $image = getUserImage($imageId, $database);
+
+                // response when everything ok
+                echo '{"success": true, "user": [{"id":' . $userId . ', "imagePath":"' . $image->imagePath . '"}]}';
+
+
+            } catch (Exception $e) {
+                // response when failure to update
+                echo '{"success": false, "messages": [{"user": "' . $e->getMessage() . '", "id": "' . $userId . '"}]}';
+            }
         }
         break;
-    case 'destroy';
+    case 'destroy':
         $rawdata = $GLOBALS['HTTP_RAW_POST_DATA'];
         $tmp = json_decode($rawdata);
         $data = $tmp->user;

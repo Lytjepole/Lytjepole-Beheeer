@@ -219,9 +219,6 @@ switch ($_GET['action']) {
         echo '{"success": true}';
         break;
     default:
-        if (isset($_GET['id'])) { // return image by id
-
-        } else { // no image id given return all images bounded by sorting and filters parameters
             $start = $_GET['start'];
             $pageSize = $_GET['limit'];
 
@@ -247,7 +244,14 @@ switch ($_GET['action']) {
                 $filterSql .= implode(' AND ', $filterArray);
             }
 
-            $sql = "SELECT SQL_CALC_FOUND_ROWS id, imageName, imagePath, ownerId, recentlyUsed, artist FROM images " . $filterSql . " " . $sortSql . " " . $limitSql . "";
+            if (isset($_GET['id'])) {
+                $sql = "SELECT SQL_CALC_FOUND_ROWS id, imageName, imagePath, ownerId, recentlyUsed, artist FROM images WHERE `id` = ".$_GET['id']."";
+            } else {
+                // no image id given return all images bounded by sorting and filters parameters
+                $sql = "SELECT SQL_CALC_FOUND_ROWS id, imageName, imagePath, ownerId, recentlyUsed, artist FROM images " . $filterSql . " " . $sortSql . " " . $limitSql . "";
+            }
+
+            //$sql = "SELECT SQL_CALC_FOUND_ROWS id, imageName, imagePath, ownerId, recentlyUsed, artist FROM images " . $filterSql . " " . $sortSql . " " . $limitSql . "";
 
             $result = $database->query($sql);
             $totalQuery = 'SELECT FOUND_ROWS()';
@@ -262,8 +266,5 @@ switch ($_GET['action']) {
             } else {
                 echo '{"success": true, "total": "0", "image":' . json_encode($arr) . '}';
             }
-        }
-
-
         break;
 }

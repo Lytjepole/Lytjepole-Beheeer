@@ -40,7 +40,7 @@
     /**
      * The Sencha Framework for this application: "ext" or "touch".
      */
-    "framework": "ext",
+    "framework": "ext601",
     
     /**
      * The toolkit to use. Select either "classic" or "modern".
