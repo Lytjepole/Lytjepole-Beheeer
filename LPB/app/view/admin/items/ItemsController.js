@@ -8,7 +8,27 @@ Ext.define('LPB.view.admin.items.ItemsController', {
     /**
      * Called when the view is created
      */
-    init: function() {
+    init: function () {
+
+    },
+
+    onAdditemWindowBeforeClose: function (win) {
+        var refs = this.getReferences();
+        console.log(arguments);
+        if (refs.additemform.isDirty()) {
+            Ext.Msg.confirm(
+                'Venster sluiten?',
+                'weet je zeker?',
+                function (btn) {
+                    if (btn === 'yes') {
+                        win.destroy();
+                    }
+                }
+            );
+        } else {
+            win.destroy();
+        }
+        return false;
 
     },
 
@@ -62,6 +82,7 @@ Ext.define('LPB.view.admin.items.ItemsController', {
 
     afterUserGridRender: function (grid) {
         var store = grid.getStore();
+        store.group('title', 'ASC');
         store.filter({
             property: 'endDate',
             operator: '>=',
@@ -96,8 +117,37 @@ Ext.define('LPB.view.admin.items.ItemsController', {
         this.editItem(record);
     },
 
-    onActionDeleteClick: function (view, rowIndex, colIndex, item, e, record) {
+    onDeleteItemBtnClick: function () {
+        var me = this,
+            refs = me.getReferences();
+        record = me.getView().getSelectionModel().getSelection()[0];
+        Ext.Msg.show({
+            title: 'Item verwijderen...',
+            message: 'Item "' + record.get('title') + '" verwijderen?',
+            buttons: Ext.Msg.YESNOCANCEL,
+            icon: Ext.Msg.QUESTION,
+            fn: function (btn) {
+                if (btn === 'yes') {
+                    // do delete item
+                    record.erase();
+                }
+            }
+        });
+    },
 
+    onActionDeleteClick: function (view, rowIndex, colIndex, item, e, record) {
+        Ext.Msg.show({
+            title: 'Item verwijderen...',
+            message: 'Item "' + record.get('title') + '" verwijderen?',
+            buttons: Ext.Msg.YESNOCANCEL,
+            icon: Ext.Msg.QUESTION,
+            fn: function (btn) {
+                if (btn === 'yes') {
+                    // do delete item
+                    record.erase();
+                }
+            }
+        });
     },
 
     onActionCopyNewClick: function (view, rowIndex, colIndex, item, e, record) {
@@ -115,6 +165,40 @@ Ext.define('LPB.view.admin.items.ItemsController', {
         });
         addItemWindow.show();
         this.getView().add(addItemWindow);
+    },
+
+    onSubmitAddItemForm: function () {
+        var
+            me = this,
+            refs = this.getReferences(),
+            store = Ext.getStore('Items'),
+            form = refs.additemform,
+            values = form.getValues(),
+            data = form.getForm().findField('dates').getSubmitValue(),
+            count = data.getCount(),
+            i;
+
+        values.userId = me.getViewModel().data.currentUser.id;
+        if (form.isValid() && form.isDirty()) {
+            // process form values
+            for (i = 0; i < count; i++) {
+                values.id = null;
+                values.beginDate = data.getAt(i).get('beginDate');
+                values.endDate = data.getAt(i).get('endDate');
+                store.add(values);
+            }
+            store.sync({
+                success: function () {
+                    me.getView().remove('additemwindow');
+                    refs.additemwindow.destroy();
+                    store.reload();
+                },
+                failure: function () {
+                    console.log(arguments);
+                }
+            });
+            //refs.itemsgrid.updateLayout();
+        }
     },
 
     onEditItemBtnClick: function () {

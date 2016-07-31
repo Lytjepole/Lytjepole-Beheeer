@@ -12,6 +12,12 @@ Ext.define('LPB.view.admin.items.ItemsModel', {
             pageSize: 0,
             autoLoad: true,
             remoteFilter: true
+        },
+        ItemLocations: {
+            model: 'LPB.model.Location',
+            storeId: 'ItemLocations',
+            pageSize: 0,
+            autoLoad: false
         }
     },
 

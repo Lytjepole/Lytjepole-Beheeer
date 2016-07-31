@@ -183,13 +183,10 @@ Ext.define('LPB.view.admin.items.Items', {
     }, {
         text: 'kiekeboe',
         dataIndex: 'text',
-        flex: 1,
+        flex: 2,
         renderer: function (value, metaData, record) {
             return Ext.util.Format.ellipsis(value, 200, true);
         }
-    }, {
-        dataIndex: 'title',
-        flex: 1
     }, {
         dataIndex: 'locationId',
         flex: 1,

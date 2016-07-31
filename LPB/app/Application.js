@@ -29,7 +29,7 @@ Ext.define('LPB.Application', {
         'LPB.store.Images',
         'LPB.store.Users',
         'LPB.store.Locations',
-        'Items',
+        'LPB.store.Items',
         'MoreItems',
         'Categories',
         'Groups'

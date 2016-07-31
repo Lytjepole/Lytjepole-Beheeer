@@ -20,7 +20,10 @@ Ext.application({
         'Ext.sunfield.imageUploader.ImageUploader',
         'Ext.sunfield.locationSelect.LocationSelect',
         'Ext.sunfield.imageField.ImageField',
-        'Ext.sunfield.DateSlider'
+        'Ext.sunfield.imageField.DatesField',
+        'Ext.sunfield.DateSlider',
+        'Ext.sunfield.sunEditor.SunEditor',
+        'Ext.ux.form.ItemSelector'
     ]
 
     // The name of the initial view to create. With the classic toolkit this class

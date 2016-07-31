@@ -176,7 +176,7 @@ switch ($_GET['action']) {
             $autoPassGen = $data[$i]->autoPassGen;
             $imageId = $data[$i]->imageId;
             //$accessLevel = $data[$i]->accessLevel;
-            $accessLevel = 3; //make user on add
+            $accessLevel = 3; //make user on add default
             $name = $data[$i]->name;
 
             $image = getImage($imageId, $database);

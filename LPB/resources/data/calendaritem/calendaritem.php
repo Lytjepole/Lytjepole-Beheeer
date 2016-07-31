@@ -9,8 +9,108 @@ session_start();
 require('../connections/mysql.php');
 require('../php/common/sha256.php');
 
+function setCategories($itemId, $cats, $database) {
+    // clear existing
+    $sql = "DELETE FROM `item_category` WHERE `itemId` = ".$itemId."";
+    $database->query($sql);
+    //set new
+    $arr = explode(',', $cats);
+    $values = [];
+    foreach ($arr as $value) {
+        $values[] = "('".$itemId."', '".$value."')";
+    }
+    $insSQL = "INSERT INTO `item_category` (`itemId`, `categoryId`) VALUES ".implode(',', $values)."";
+    $database->query($insSQL);
+}
+
+function setGroup($itemId, $group, $database) {
+    // clear existing
+    $sql = "DELETE FROM `item_group` WHERE `itemId` = ".$group."";
+    $database->query($sql);
+
+    // set new
+    $insSQL = "INSERT INTO `item_group` (`itemId`, `groupId`) VALUES ('".$itemId."', '".$group."')";
+    $database->query($insSQL);
+}
+
+function getLocation($locationId, $database) {
+    $sql = "SELECT * FROM `locations` WHERE `id` = ".$locationId." LIMIT 0,1";
+    $result = $database->query($sql);
+
+    return mysqli_fetch_assoc($result);
+}
+
 switch ($_GET['action']) {
     case 'create':
+        $rawData = $GLOBALS['HTTP_RAW_POST_DATA'];
+        $tmp = json_decode($rawData);
+        $data = $tmp->calendaritem;
+
+        //$insertedItems[] = array();
+
+        //print_r($data);
+        for ($i = 0; $i < count($data); $i++) {
+            $title = $database->real_escape_string($data[$i]->title);
+            $subtitle = $database->real_escape_string($data[$i]->subtitle);
+            $text = $database->real_escape_string($data[$i]->text);
+            $imageId = $database->real_escape_string($data[$i]->imageId);
+            $beginDate = $database->real_escape_string($data[$i]->beginDate);
+            $location = $database->real_escape_string($data[$i]->location);
+            $locationId = $database->real_escape_string($data[$i]->locationId);
+            $imageId = $database->real_escape_string($data[$i]->imageId);
+            $phone = $database->real_escape_string($data[$i]->phone);
+            $url = $database->real_escape_string($data[$i]->url);
+            $email = $database->real_escape_string($data[$i]->email);
+            $source = $database->real_escape_string($data[$i]->source);
+            $sourceURL = $database->real_escape_string($data[$i]->sourceURL);
+            $categorySelector = $database->real_escape_string($data[$i]->categorySelector);
+            $groupSelector = $database->real_escape_string($data[$i]->groupSelector);
+            $published = $database->real_escape_string($data[$i]->published);
+            $permanent = $database->real_escape_string($data[$i]->permanent);
+            $general = $database->real_escape_string($data[$i]->general);
+            $endDate = $database->real_escape_string($data[$i]->endDate);
+            $userId = $database->real_escape_string($data[$i]->userId);
+            $shortLocation = $database->real_escape_string($data[$i]->shortLocation);
+            $highlight = 0;// $database->real_escape_string($data[$i]->highlight);
+            $embargo = $database->real_escape_string($data[$i]->embargo);
+            $embargoEndDate = $database->real_escape_string($data[$i]->embargoEndDate);
+            $embargoEndTime = $database->real_escape_string($data[$i]->embargoEndTime);
+
+            if ($location == 1) {
+                // set locationId, clear shortlocation
+                $shortLocation = '';
+                $locationData = getLocation($locationId, $database);
+               //print_r($locationData['name']);
+            } else {
+                // clear locationId, set shortlocation
+                $locationId = 0;
+                $locationData = $shortLocation;
+            }
+
+            if ($embargo == 1) {
+                $embargoDate = new DateTime($embargoEndDate .' '. $embargoEndTime);
+            } else {
+                $embargo = 0;
+                $embargoDate = new DateTime();
+            }
+
+            $sql = "INSERT INTO `items` (`title`, `subtitle`, `text`, `beginDate`, `endDate`, `source`, `sourceLink`, `userId`, `imageId`, `locationId`, `shortLocation`, `www`, `highlight`, `created`, `published`, `permanent`, `embargo`, `embargoEnd`, `general`, `email`, `phone` ) VALUES ('".$title."', '".$subtitle."', '".$text."', '".$beginDate."', '".$endDate."', '".$source."', '".$sourceURL."', '".$userId."', '".$imageId."', '".$locationId."', '".$shortLocation."', '".$www."', '".$highlight."', NOW(), '".$published."', '".$permanent."', '".$embargo."', '".$embargoDate->format('Y-m-d H:i:s')."', '".$general."', '".$email."', '".$phone."' )";
+
+            $database->query($sql);
+            $insertedId = $database->insert_id;
+
+            // set category and group for inserted id
+            setCategories($insertedId, $categorySelector, $database);
+            if($groupSelector > 0) {setGroup($insertedId, $groupSelector, $database);}
+
+            $insertedItems[] = array('shortLocation'=> $shortLocation, 'name'=> $locationData['name'], 'street'=>$locationData['street'], 'number'=>$locationData['number']);
+            // extjs flips when returning item id from php
+            //$insertedItems[] = array('id'=> "$insertedId", 'shortLocation'=> $shortLocation, 'name'=> $locationData['name'], 'street'=>$locationData['street'], 'number'=>$locationData['number']);
+            //print_r($insertedItems);
+        }
+
+        echo '{"success": true, "calendaritem": ' . json_encode($insertedItems) . ' }';
+
         break;
 
     case 'update':
@@ -53,6 +153,26 @@ switch ($_GET['action']) {
         }
         break;
     case 'destroy':
+        $rawdata = $GLOBALS['HTTP_RAW_POST_DATA'];
+        $tmp = json_decode($rawdata);
+        $data = $tmp->calendaritem;
+
+        for ($i = 0; $i < count($data); $i++) {
+            // delete item
+            $sql = "DELETE FROM `items` WHERE id = ".$data[$i]->id."";
+            $database->query($sql);
+            // delete category ref
+            $sql = "DELETE FROM `item_category` WHERE `itemId` = ".$data[$i]->id."";
+            $database->query($sql);
+            // delete group ref
+            $sql = "DELETE FROM `item_group` WHERE `itemId` = ".$data[$i]->id."";
+            $database->query($sql);
+            // delete imgage ref
+            $sql = "DELETE FROM `item_image` WHERE `itemId` = ".$data[$i]->id."";
+            $database->query($sql);
+
+        }
+        echo '{"success": true}';
 
         break;
     default:

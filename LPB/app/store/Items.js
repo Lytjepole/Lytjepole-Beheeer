@@ -4,9 +4,10 @@ Ext.define('LPB.store.Items', {
     model: 'LPB.model.CalendarItem',
 
     storeId: 'Items',
-    groupField: 'title',
+    //groupField: 'title',
     pageSize: 0,
     autoLoad: false,
+    autoSync: false,
     remoteSort: true,
     remoteFilter: true,
 
