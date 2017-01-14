@@ -29,6 +29,10 @@ LIMIT 0 , 1";
             echo '{"success": false}';
         }
 
+        // clean up old usersessions
+        $sql = "DELETE FROM `userSessions` WHERE `expires` < NOW()";
+        $database->query($sql);
+        // end cleaning up
         break;
     case 'destroySession':
 

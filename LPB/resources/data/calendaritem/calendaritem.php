@@ -7,7 +7,7 @@
  */
 session_start();
 require('../connections/mysql.php');
-require('../php/common/sha256.php');
+//require('../php/common/sha256.php');
 
 function setCategories($itemId, $cats, $database) {
     // clear existing
@@ -25,12 +25,14 @@ function setCategories($itemId, $cats, $database) {
 
 function setGroup($itemId, $group, $database) {
     // clear existing
-    $sql = "DELETE FROM `item_group` WHERE `itemId` = ".$group."";
+    $sql = "DELETE FROM `item_group` WHERE `itemId` = ".$itemId."";
     $database->query($sql);
 
-    // set new
-    $insSQL = "INSERT INTO `item_group` (`itemId`, `groupId`) VALUES ('".$itemId."', '".$group."')";
-    $database->query($insSQL);
+    // set new or nothing if no group given
+    if ($group) {
+        $insSQL = "INSERT INTO `item_group` (`itemId`, `groupId`) VALUES ('".$itemId."', '".$group."')";
+        $database->query($insSQL);
+    }
 }
 
 function getLocation($locationId, $database) {
@@ -42,13 +44,13 @@ function getLocation($locationId, $database) {
 
 switch ($_GET['action']) {
     case 'create':
-        $rawData = $GLOBALS['HTTP_RAW_POST_DATA'];
+        $rawData = file_get_contents("php://input");
         $tmp = json_decode($rawData);
         $data = $tmp->calendaritem;
 
         //$insertedItems[] = array();
 
-        //print_r($data);
+        //print_r(count($data));
         for ($i = 0; $i < count($data); $i++) {
             $title = $database->real_escape_string($data[$i]->title);
             $subtitle = $database->real_escape_string($data[$i]->subtitle);
@@ -59,7 +61,7 @@ switch ($_GET['action']) {
             $locationId = $database->real_escape_string($data[$i]->locationId);
             $imageId = $database->real_escape_string($data[$i]->imageId);
             $phone = $database->real_escape_string($data[$i]->phone);
-            $url = $database->real_escape_string($data[$i]->url);
+            $www = $database->real_escape_string($data[$i]->url);
             $email = $database->real_escape_string($data[$i]->email);
             $source = $database->real_escape_string($data[$i]->source);
             $sourceURL = $database->real_escape_string($data[$i]->sourceURL);
@@ -67,7 +69,9 @@ switch ($_GET['action']) {
             $groupSelector = $database->real_escape_string($data[$i]->groupSelector);
             $published = $database->real_escape_string($data[$i]->published);
             $permanent = $database->real_escape_string($data[$i]->permanent);
+            if($permanent != 1) {$permanent = 0;}
             $general = $database->real_escape_string($data[$i]->general);
+            if($general != 1) {$general = 0;}
             $endDate = $database->real_escape_string($data[$i]->endDate);
             $userId = $database->real_escape_string($data[$i]->userId);
             $shortLocation = $database->real_escape_string($data[$i]->shortLocation);
@@ -106,7 +110,6 @@ switch ($_GET['action']) {
             $insertedItems[] = array('shortLocation'=> $shortLocation, 'name'=> $locationData['name'], 'street'=>$locationData['street'], 'number'=>$locationData['number']);
             // extjs flips when returning item id from php
             //$insertedItems[] = array('id'=> "$insertedId", 'shortLocation'=> $shortLocation, 'name'=> $locationData['name'], 'street'=>$locationData['street'], 'number'=>$locationData['number']);
-            //print_r($insertedItems);
         }
 
         echo '{"success": true, "calendaritem": ' . json_encode($insertedItems) . ' }';
@@ -114,7 +117,7 @@ switch ($_GET['action']) {
         break;
 
     case 'update':
-        $rawdata = $GLOBALS['HTTP_RAW_POST_DATA'];
+        $rawdata = file_get_contents("php://input");
         $tmp = json_decode($rawdata);
         $data = $tmp->calendaritem;
 
@@ -126,24 +129,37 @@ switch ($_GET['action']) {
             $beginDate = $data[$i]->beginDate;
             $endDate = $data[$i]->endDate;
             $source = $data[$i]->source;
-            $sourceLink = $data[$i]->sourceLink;
+            $sourceLink = $data[$i]->sourceURL;
             $userId = $data[$i]->userId;
             $imageId = $data[$i]->imageId;
             $locationId = $data[$i]->locationId;
             $shortLocation = $data[$i]->shortLocation;
             $www = $data[$i]->www;
             $highlight = $data[$i]->highlight;
+            if($highlight != 1) {$highlight = 0;}
             $published = $data[$i]->published;
+            if($published != 1) {$published = 0;}
             $permanent = $data[$i]->permanent;
+            if($permanent != 1) {$permanent = 0;}
             $embargo = $data[$i]->embargo;
+            if($embargo != 1) {$embargo = 0;}
             $embargoEnd = $data[$i]->embargoEnd;
+            if ($embargoEnd == '') {$embargoEnd = date('Y-m-d H:i:s');}
             $general = $data[$i]->general;
+            if($general != 1) {$general = 0;}
             $email = $data[$i]->email;
             $phone = $data[$i]->phone;
+            $categorySelector = $database->real_escape_string($data[$i]->categorySelector);
+            $groupSelector = $database->real_escape_string($data[$i]->groupSelector);
 
             try {
                 $sql = "UPDATE `items` SET `title` = '".$title."', `subtitle` = '".$subtitle."', `text` = '".$text."', `beginDate` = '".$beginDate."', `endDate` = '".$endDate."', `source` = '".$source."', `sourceLink` = '".$sourceLink."', `userId` = '".$userId."', `imageId` = '".$imageId."', `locationId` = '".$locationId."', `shortLocation` = '".$shortLocation."', `www` = '".$www."', `highlight` = '".$highlight."', `published` = '".$published."', `permanent` = '".$permanent."', `embargo` = '".$embargo."', `embargoEnd` = '".$embargoEnd."', `general` = '".$general."', `email` = '".$email."', `phone` = '".$phone."' WHERE `id` = ".$id."";
-
+                if ($categorySelector) {
+                    setCategories($id, $categorySelector, $database);
+                }
+                if ($groupSelector) {
+                    setGroup($id, $groupSelector, $database);
+                }
                 $database->query($sql);
 
                 echo '{"success": true}';
@@ -153,7 +169,7 @@ switch ($_GET['action']) {
         }
         break;
     case 'destroy':
-        $rawdata = $GLOBALS['HTTP_RAW_POST_DATA'];
+        $rawdata = file_get_contents("php://input");
         $tmp = json_decode($rawdata);
         $data = $tmp->calendaritem;
 

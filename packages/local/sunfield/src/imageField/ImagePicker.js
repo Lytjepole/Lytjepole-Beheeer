@@ -37,25 +37,25 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
                     iconCls: 'fa fa-plus-square',
                     tooltip: 'Afbeelding toevoegen',
                     handler: function (field) {
+                        var pwin = field.up('window');
                         win = Ext.create({
                             xtype: 'imageuploader',
                             tmpDir: '../../images/temp/',
-                            uploadDir: 'resources/images/users/',
-                            thumbnailDir: 'resources/images/users/75x75',
+                            //uploadDir: 'resources/images/users/',
+                            uploadDir: pwin.imagesDir,
+                            thumbnailDir: pwin + '75x75',
                             thumbnailSize: [75, 75],
                             imageSize: [100, 100],
                             previewSize: [800, 600],
                             minImageWidth: 600,
                             minImageHeight: 600,
                             imageProcessor: 'resources/data/image/image.php',
-                            imagesStore: 'UserImages'
+                            imagesStore: pwin.store
                         });
                         win.show();
-                        store = Ext.getStore(win.imagesStore);
-                        console.log(store);
+                        store = Ext.getStore(pwin.store);
                         store.addListener({
                             add: function (store, records, index, eOpts) {
-                                //Ext.getCmp('infopanel').loadRecord(records[0]);
                                 Ext.getCmp('imagedataviewer').setSelection(records[0]);
                             }
                         });
@@ -85,7 +85,7 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
                     '<tpl for=".">',
                     '<div class="thumb-wrap">',
                     '<div class="thumb">',
-                    '<img width="75" height="75" title="{imageName}" src="resources/images/users/{imagePath}" />',
+                    '<img width="75" height="75" title="{imageName}" src="' + this.imagesDir + '{imagePath}" />',
                     '</div>', '<span>{shortName}</span>', '</div>',
                     '</tpl>'],
 
@@ -107,14 +107,18 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
             itemId: 'infopanel',
             cls: 'infopanel',
 
+            listeners: {
+                render: this.loadCurrentImage
+            },
+
             tpl: ['<div class="details">', '<tpl for=".">',
-                '<div><img src="resources/images/users/{imagePath}" /></div>',
+                '<div><img src="' + this.imagesDir + '{imagePath}" /></div>',
                 '<div class="details-info">', '<b>Afbeelding</b>',
                 '<span>{imageName}</span>', '<b>Bestandsnaam</b>',
                 '<span>{imagePath}</span>', '<b>Laatst gebruikt</b>',
                 '<span>{mru}</span>', '</div>', '</tpl>', '</div>'],
 
-            prepareDate: function (data) {
+            prepareData: function (data) {
                 Ext.apply(data, {
                     mru: Ext.Date.format(data.recentlyUsed, 'Y-m-d H:i:s')
                 });
@@ -148,9 +152,25 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
 
         this.callParent(arguments);
     },
+    //
+    // onImageAdded: function (image) {
+    //     console.log('kiekeboe');
+    // },
 
-    onImageAdded: function (image) {
-        console.log('kiekeboe');
+    loadCurrentImage: function () {
+        if (this.up('window').currentImageId > 1) {
+            var win = this.up('window'),
+                dataview = win.down('dataview'),
+                store = Ext.getStore(win.store),
+                currentImageId = win.currentImageId,
+                index,
+                record;
+            console.log('preselect image');
+            index = store.findExact('id', currentImageId);
+            record = store.getAt(index);
+            dataview.setSelection(record);
+            //this.loadRecord(record);
+        }
     },
 
     onSelectionChange: function (view, selections) {
@@ -162,9 +182,10 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
     },
 
     onSelectBtnClick: function (btn) {
-        view = btn.up('window').down('dataview');
-        image = view.getSelectionModel().getSelection()[0];
-        if(image) {
+        var view = btn.up('window').down('dataview'),
+            image = view.getSelectionModel().getSelection()[0];
+
+        if (image) {
             this.pickImage(image);
         } else {
             console.log('no image selected');
@@ -182,11 +203,30 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
         this.destroy();
     },
 
-    searchImage: function () {
-        console.log('searching for image');
+    searchImage: function (field) {
+        //console.log('searching for image');
+        var view = this.down('dataview'),
+            value = field.getValue(),
+            searchString = '%' + value.trim() + '%',
+            store = view.getStore();
+
+        if (value.trim().length) {
+            store.filter([{
+                property: 'imageName',
+                operator: 'like',
+                value: searchString
+            }, {
+                property: 'imagePath',
+                operator: 'like',
+                value: searchString
+            }]);
+        } else {
+            store.clearFilter();
+        }
+
     },
 
     clearSearchFilter: function (field) {
-        console.log('clear searchfilter!', field);
+        field.setValue('');
     }
 });

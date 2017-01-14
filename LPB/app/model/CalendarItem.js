@@ -116,7 +116,8 @@ Ext.define('LPB.model.CalendarItem', {
         type: 'bool'
     }, {
         name: 'embargoEnd',
-        type: 'date'
+        type: 'date',
+        dateFormat: 'Y-m-d H:i:s'
     }, {
         name: 'permanent',
         type: 'bool'

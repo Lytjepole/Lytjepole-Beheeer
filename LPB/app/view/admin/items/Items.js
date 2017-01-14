@@ -135,7 +135,7 @@ Ext.define('LPB.view.admin.items.Items', {
             if (Ext.Date.getDayOfYear(beginDate) === Ext.Date.getDayOfYear(endDate)) {
                 return Ext.Date.format(beginDate, 'd F Y H:i') + '-' + Ext.Date.format(endDate, 'H:i');
             } else {
-                return Ext.Date.format(beginDate, 'd F Y H:i') + '<br />tot<br />' + Ext.Date.format(endDate, 'd F Y H:i');
+                return Ext.Date.format(beginDate, 'd F Y H:i') + '<br />t/m<br />' + Ext.Date.format(endDate, 'd F Y H:i');
             }
         }
     }, {

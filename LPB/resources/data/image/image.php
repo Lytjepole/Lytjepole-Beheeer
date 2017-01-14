@@ -29,7 +29,7 @@ function getAverageColor($filename)
 switch ($_GET['action']) {
     case 'createtmpimage': //upload tmp image to server
         try {
-            //print_r($_FILES);
+            //phpinfo();
 
             if (!count($_FILES) && !count($_POST)) {
                 throw new RuntimeException('Er is iets misgegaan...');
@@ -129,7 +129,7 @@ switch ($_GET['action']) {
         unlink('../../images/temp/' . $_GET['tmpimage']);
         break;
     case 'create':
-        $rawdata = $GLOBALS['HTTP_RAW_POST_DATA'];
+        $rawdata = file_get_contents("php://input");
         $tmp = json_decode($rawdata);
         $data = $tmp->image;
 
@@ -148,6 +148,8 @@ switch ($_GET['action']) {
             $thumbnailWidth = $data[$i]->params->thumbnailWidth;
             $thumbnailHeight = $data[$i]->params->thumbnailHeight;
             $originalFilename = $data[$i]->params->originalFilename;
+            $imageTitle = $data[$i]->params->imageTitle;
+            $userId = $data[$i]->params->userId;
 
             $image = new Imagick('../../images/temp/' . $tmpName);
 
@@ -187,7 +189,7 @@ switch ($_GET['action']) {
 
         //update database
 
-        $sql = "INSERT INTO `images` (`imageName`, `imagePath`, `artist`, `ownerId`, `recentlyUsed`) VALUES ('test', '".$testName."', 'pipo', '1', NOW());";
+        $sql = "INSERT INTO `images` (`imageName`, `imagePath`, `artist`, `ownerId`, `recentlyUsed`) VALUES ('".$imageTitle."', '".$testName."', '', '".$userId."', NOW());";
         $database->query($sql);
         }
 
@@ -197,10 +199,25 @@ switch ($_GET['action']) {
 //        echo '{"success": false}';
 //        break;
     case 'update':
+        $rawdata = file_get_contents("php://input");
+        $tmp = json_decode($rawdata);
+        $data = $tmp->image;
 
+        $sql = "UPDATE `images` SET `imageName` = ?, `artist` = ? WHERE `id` = ?";
+        $stmt = $database->prepare($sql);
+        $stmt->bind_param("ssi", $imageName, $artist, $id);
+
+        for ($i = 0; $i < count($data); $i++) {
+            $imageName = $data[$i]->imageName;
+            $artist = $data[$i]->artist;
+            $id = $data[$i]->id;
+
+            $stmt->execute();
+        }
+        echo '{"success": true}';
         break;
     case 'destroy';
-        $rawdata = $GLOBALS['HTTP_RAW_POST_DATA'];
+        $rawdata = file_get_contents("php://input");
         $tmp = json_decode($rawdata);
         $data = $tmp->image;
 

@@ -125,7 +125,8 @@ Ext.define('Ext.sunfield.imageUploader.ImageUploader', {
                         thumbnailSize: me.thumbnailSize,
                         thumbnailDir: me.thumbnailDir,
                         imageProcessor: me.imageProcessor,
-                        imagesStore: me.imagesStore
+                        imagesStore: me.imagesStore,
+                        userId: me.userId
                     });
                     editor.mask('Afbeelding voorbereiden...');
                 },

@@ -69,6 +69,15 @@ Ext.define('Ext.sunfield.imageUploader.ImageCropper', {
                 id: 'resetbutton'
             }, {
                 text: 'another btn'
+            }, {
+                xtype: 'tbfill'
+            }, {
+                xtype: 'textfield',
+                id: 'imageTitle',
+                fieldLabel: 'Titel',
+                name: 'title',
+                value: me.imageFilename,
+                width: 300
             }]
         }, {
             xtype: 'image',
@@ -106,7 +115,8 @@ Ext.define('Ext.sunfield.imageUploader.ImageCropper', {
     submitImage: function () {
         var me = this,
             win = Ext.getCmp('imageprepare'),
-            store = Ext.getStore(me.imagesStore);
+            store = Ext.getStore(me.imagesStore),
+            imageTitle = Ext.getCmp('imageTitle').getValue();
 
         win.mask('Gegevens verwerken...');
 
@@ -120,6 +130,8 @@ Ext.define('Ext.sunfield.imageUploader.ImageCropper', {
         me.cropData.imageHeight = me.imageSize[1];
         me.cropData.thumbnailDir = me.thumbnailDir;
         me.cropData.originalFilename = me.originalFilename;
+        me.cropData.imageTitle = imageTitle;
+        me.cropData.userId = me.userId;
 
         store.suspendEvents(true);
         store.add({
@@ -128,12 +140,13 @@ Ext.define('Ext.sunfield.imageUploader.ImageCropper', {
         });
         store.sync({
             success: function (batch, options) {
-                console.log('image sync success');
                 win.destroy();
                 store.resumeEvents();
+                store.reload();
             },
             failure: function (response) {
                 store.resumeEvents();
+                win.unmask();
             }
         });
     }

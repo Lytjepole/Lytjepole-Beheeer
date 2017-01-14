@@ -57,6 +57,19 @@ Ext.define('LPB.view.admin.MainModel', {
                     }]
                 }]
             }
+        },
+        ItemImages: {
+            model: 'LPB.model.Image',
+            storeId: 'ItemImages',
+            pageSize: 0,
+            autoLoad: false,
+            remoteFilter: true
+        },
+        ItemLocations: {
+            model: 'LPB.model.Location',
+            storeId: 'ItemLocations',
+            pageSize: 0,
+            autoLoad: false
         }
     }
 });

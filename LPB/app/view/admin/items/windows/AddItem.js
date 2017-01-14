@@ -18,73 +18,16 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
     },
 
     initComponent: function () {
-
-        Ext.apply(Ext.form.field.VTypes, {
-            singleDayEventText: 'Eindtijd moet na begintijd liggen',
-            singleDayEvent: function () { // event on single day: 1) endtime > begintime 2) begindate >= today
-                var form = Ext.getCmp('additemform').getForm(),
-                    beginDateField = form.findField('beginDate'),
-                    beginTimeField = form.findField('beginTime'),
-                    endDateField = form.findField('endDate'),
-                    endTimeField = form.findField('endTime'),
-                    result;
-
-                beginDateField.clearInvalid();
-                result = (endTimeField.getValue() > beginTimeField.getValue());
-
-                if (result) {
-                    beginDateField.clearInvalid();
-                    beginTimeField.clearInvalid();
-                    endDateField.clearInvalid();
-                    endTimeField.clearInvalid();
-                } else {
-                    beginDateField.clearInvalid();
-                    endDateField.clearInvalid();
-                    beginTimeField.markInvalid('Eindtijd moet na begintijd liggen');
-                    endTimeField.markInvalid('Eindtijd moet na begintijd liggen');
-                }
-                Ext.getCmp('adddatebtn').setDisabled(!result);
-
-                return result;
-            },
-
-            multiDayEventText: 'Einddatum moet na begindatum liggen',
-            multiDayEvent: function () { // event on multiple days: 1) enddate > begindate
-                var form = Ext.getCmp('additemform').getForm(),
-                    beginDateField = form.findField('beginDate'),
-                    beginTimeField = form.findField('beginTime'),
-                    endDateField = form.findField('endDate'),
-                    endTimeField = form.findField('endTime'),
-                    result;
-
-                //console.log(form);
-                result = (endDateField.getValue() > beginDateField.getValue());
-
-                if (result) {
-                    beginDateField.clearInvalid();
-                    beginTimeField.clearInvalid();
-                    endDateField.clearInvalid();
-                    endTimeField.clearInvalid();
-                } else {
-                    beginTimeField.clearInvalid();
-                    endTimeField.clearInvalid();
-                    beginDateField.markInvalid('Einddatum moet na begindatum liggen');
-                    endDateField.markInvalid('Einddatum moet na begindatum liggen');
-                }
-
-                Ext.getCmp('adddatebtn').setDisabled(!result);
-
-                return result;
-            }
-
-        });
-
-
         this.items = [{
             xtype: 'form',
             reference: 'additemform',
             id: 'additemform',
             layout: 'fit',
+            trackResetOnLoad: true,
+            listeners: {
+                scope: this,
+                afterrender: this.addItemFormAfterRender
+            },
 
             items: [{
                 xtype: 'tabpanel',
@@ -102,11 +45,11 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
                         fieldLabel: 'Titel',
                         name: 'title',
                         allowBlank: false,
-                        emptyValue: 'titel',
-                        value: 'title'
+                        emptyText: 'titel'
                     }, {
                         fieldLabel: 'Ondertitel',
-                        name: 'subtitle'
+                        name: 'subtitle',
+                        emptyText: 'ondertitel'
                     }, {
                         xtype: 'suneditor',
                         fieldLabel: 'Tekst',
@@ -198,10 +141,6 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
                             format: 'D d F Y',
                             disabled: true,
                             name: 'endDate',
-                            //id: 'endatefield',
-                            // bind: {
-                            //     disabled: '{!multipledays.checked}'
-                            // },
                             listeners: {
                                 change: this.dateChanged,
                                 afterrender: this.endDateFieldRendered
@@ -233,10 +172,10 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
                                 checked: true,
                                 inputValue: 1,
                                 reference: 'choiceone',
+                                id: 'choiceone',
                                 name: 'location',
                                 listeners: {
                                     change: function (field) {
-                                        //console.log(field);
                                         var form = field.up('form').getForm(),
                                             combo = form.findField('locationId'),
                                             text = form.findField('shortLocation');
@@ -250,11 +189,28 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
                                 flex: 2,
                                 name: 'locationId',
                                 store: 'ItemLocations',
-                                displayField: 'name',
                                 valueField: 'id',
                                 queryMode: 'remote',
                                 forceSelection: true,
-                                emptyText: 'kies een locatie'
+                                emptyText: 'kies een locatie',
+                                tpl: Ext.create('Ext.XTemplate',
+                                    '<ul class="x-list-plain"><tpl for=".">',
+                                    '<tpl if="number!=0">',
+                                        '<li role="option" class="x-boundlist-item">{name} - {street} {number}</li>',
+                                    '<tpl else >',
+                                        '<li role="option" class="x-boundlist-item">{name} - {street}</li>',
+                                    '</tpl>',
+                                    '</tpl></ul>'
+                                ),
+                                displayTpl: Ext.create('Ext.XTemplate',
+                                    '<tpl for=".">',
+                                    '<tpl if="number!=0">',
+                                        '{name} - {street} {number}',
+                                    '<tpl else>',
+                                        '{name} - {street}',
+                                    '</tpl>',
+                                    '</tpl>'
+                                )
                             }]
                         }, {
                             xtype: 'fieldcontainer',
@@ -265,13 +221,15 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
                                 flex: 1,
                                 inputValue: 2,
                                 reference: 'choicetwo',
+                                id: 'choicetwo',
                                 name: 'location'
                             }, {
                                 xtype: 'textfield',
                                 name: 'shortLocation',
                                 allowBlank: false,
                                 flex: 2,
-                                disabled: true
+                                disabled: true,
+                                emptyText: 'omschrijving'
                             }]
                         }]
                     }]
@@ -281,13 +239,13 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
                     items: [{
                         xtype: 'fieldset',
                         border: 'none',
-                        //title: 'Telefoon',
                         items: [{
                             xtype: 'textfield',
                             labelWidth: 200,
                             fieldLabel: 'Telefoon',
                             name: 'phone',
-                            anchor: '100%'
+                            anchor: '100%',
+                            emptyText: '0519531234'
                         }]
                     }, {
                         xtype: 'fieldset',
@@ -301,11 +259,13 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
                         items: [{
                             fieldLabel: 'Website',
                             name: 'url',
-                            vtype: 'url'
+                            vtype: 'url',
+                            emptyText: 'http://www.website.nl'
                         }, {
                             fieldLabel: 'Email',
                             name: 'email',
-                            vtype: 'email'
+                            vtype: 'email',
+                            emptyText: 'info@website.nl'
                         }]
                     }, {
                         xtype: 'fieldset',
@@ -318,11 +278,13 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
                         },
                         items: [{
                             fieldLabel: 'Bron',
-                            name: 'source'
+                            name: 'source',
+                            emptyText: 'bron'
                         }, {
                             fieldLabel: 'Bron website',
                             name: 'sourceURL',
-                            vtype: 'url'
+                            vtype: 'url',
+                            emptyText: 'http://www.website.nl'
                         }]
                     }]
                 }, {
@@ -332,6 +294,7 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
                     items: [{
                         xtype: 'itemselector',
                         store: 'Categories',
+                        id: 'categorySelector',
                         name: 'categorySelector',
                         displayField: 'title',
                         valueField: 'id',
@@ -352,6 +315,7 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
                     items: [{
                         xtype: 'itemselector',
                         store: 'Groups',
+                        id: 'groupSelector',
                         name: 'groupSelector',
                         displayField: 'name',
                         valueField: 'id',
@@ -444,7 +408,14 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
 
             buttons: [{
                 text: 'Templates',
-                xtype: 'splitbutton'
+                iconCls: 'fa fa-file-text-o',
+                xtype: 'splitbutton',
+                reference: 'templateBtn',
+                listeners: {
+                    //click: 'onTemplatesBtnClick',
+                    //afterrender: 'onTemplatesBtnClick'
+                }
+
             }, {
                 xtype: 'tbfill'
             }, {
@@ -489,6 +460,74 @@ Ext.define('LPB.view.admin.items.windows.AddItem', {
             }
         }
 
+    },
+
+    addItemFormAfterRender: function (form, what) {
+        var record = this.record,
+            additemform = form.getForm(),
+            locationCombo = additemform.findField('locationId'),
+            multipleDays = additemform.findField('multipleDays'),
+            beginTimeField = additemform.findField('beginTime'),
+            endTimeField = additemform.findField('endTime'),
+            beginDateField = additemform.findField('beginDate'),
+            endDateField = additemform.findField('endDate');
+
+        // if record isset load into form
+        if (record) {
+            form.loadRecord(record);
+            this.setCategories(record.get('id'), what);
+            this.setGroup(record.get('id'), what);
+            if (record.get('locationId')) {
+                if (!locationCombo.getStore().isLoaded()) {
+                    locationCombo.getStore().load({
+                        callback: function () {
+                            locationCombo.setValue(record.get('locationId'));
+                        }
+                    });
+                } else {
+                    locationCombo.setValue(record.get('locationId'));
+                }
+                Ext.getCmp('choiceone').setValue(true);
+
+            } else {
+                Ext.getCmp('choicetwo').setValue(true);
+            }
+
+            beginTimeField.setValue(record.get('beginDate'));
+            endTimeField.setValue(record.get('endDate'));
+
+            //console.log(Ext.Date.diff(record.get('beginDate'), new Date(), Ext.Date.DAY));
+
+            if (Ext.Date.diff(record.get('beginDate'), new Date(), Ext.Date.DAY) > 0) {
+                //console.log('records date before today'); // set to today
+                beginDateField.setValue(new Date());
+            }
+
+            if (Ext.Date.diff(record.get('beginDate'), record.get('endDate'), Ext.Date.DAY)) {
+                //console.log('multi');
+                multipleDays.setValue(true);
+            }
+        }
+    },
+
+    setCategories: function (id, what) {
+        Ext.Ajax.request({
+            scope: this,
+            url: 'resources/data/category/category.php?action=getCategories&id=' + id + '&what=' + what,
+            success: function (response, eOpts) {
+                Ext.getCmp('categorySelector').setValue(response.responseText);
+            }
+        });
+    },
+
+    setGroup: function (id, what) {
+        Ext.Ajax.request({
+            scope: this,
+            url: 'resources/data/group/group.php?action=getGroup&id=' + id + '&what=' + what,
+            success: function (response, eOpts) {
+                Ext.getCmp('groupSelector').setValue(response.responseText);
+            }
+        });
     },
 
     toggleAddDateBtn: function (value) {

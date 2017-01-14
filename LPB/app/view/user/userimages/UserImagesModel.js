@@ -7,14 +7,20 @@ Ext.define('LPB.view.user.userimages.UserImagesModel', {
 
     stores: {
         /*
-        A declaration of Ext.data.Store configurations that are first processed as binds to produce an effective
-        store configuration. For example:
+         A declaration of Ext.data.Store configurations that are first processed as binds to produce an effective
+         store configuration. For example:
+         */
 
-        users: {
-            model: 'UserImages',
-            autoLoad: true
+        userImages: {
+            model: 'Image',
+            storeId: 'userImages',
+            pageSize: 0,
+            autoLoad: true,
+            filters: [{
+                property: 'ownerId',
+                value: '{currentUser.id}'
+            }]
         }
-        */
     },
 
     data: {

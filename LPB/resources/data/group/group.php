@@ -1,9 +1,32 @@
 <?php
 session_start();
 require('../connections/mysql.php');
-require('../php/common/sha256.php');
+//require('../php/common/sha256.php');
 
 switch ($_GET['action']) {
+    case 'getGroup':
+        $itemId = $_GET['id'];
+        $what = $_GET['what'];
+        switch ($what) {
+            case 'tpl':
+                $sql = "SELECT * FROM `template_group` WHERE `templateId` = '".$itemId."'";
+                break;
+            default:
+                $sql = "SELECT * FROM `item_group` WHERE `itemId` = '".$itemId."'";
+                break;
+        }
+
+        $result = $database->query($sql);
+        if(mysqli_num_rows($result) )
+        {
+            while($obj = mysqli_fetch_object($result)) {
+                $arr[] = $obj->groupId;
+            }
+            echo implode(',', $arr);
+        }else{
+            echo 0;
+        }
+        break;
     case 'create':
 
         break;

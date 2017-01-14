@@ -1,14 +1,58 @@
 <?php
 session_start();
 require('../connections/mysql.php');
-require('../php/common/sha256.php');
 
 switch ($_GET['action']) {
+    case 'getCategories':
+        $itemId = $_GET['id'];
+        $what = $_GET['what'];
+        switch ($what) {
+            case 'tpl':
+                $sql = "SELECT * FROM `template_category` WHERE `templateId` = '".$itemId."'";
+                break;
+            case 'itm':
+                $sql = "SELECT * FROM `item_category` WHERE `itemId` = '".$itemId."'";
+            default:
+                $sql = "SELECT * FROM `item_category` WHERE `itemId` = '".$itemId."'";
+                break;
+        }
+
+        $result = $database->query($sql);
+        if(mysqli_num_rows($result) )
+        {
+            while($obj = mysqli_fetch_object($result)) {
+                $arr[] = $obj->categoryId;
+            }
+            echo implode(',', $arr);
+        }else{
+            echo 0;
+        }
+
+        break;
     case 'create':
 
         break;
     case 'update':
+        $rawdata = file_get_contents("php://input");
+        $tmp = json_decode($rawdata);
+        $data = $tmp->category;
+        for ($i = 0; $i < count($data); $i++) {
+            $id = $data[$i]->id;
+            $title = $data[$i]->title;
+            $alias = $data[$i]->alias;
+            $subtitle = $data[$i]->subtitle;
+            $order = $data[$i]->order;
+            $published = $data[$i]->published;
+            if ($published  != 1) {$published = 0;}
+            $general = $data[$i]->general;
+            if ($general != 1) {$general = 1;} else {$general = 0;}
+            $icon = $data[$i]->icon;
 
+            $sql = "UPDATE `categories` SET `title` = '".$title."', `alias` = '".$alias."', `subtitle` = '".$subtitle."', `order` = '".$order."', `published` = '".$published."', `icon` = '".$icon."', `general` = '".$general."'  WHERE `id` = '".$id."'";
+            $database->query($sql);
+
+        }
+        echo '{"success": true}';
         break;
     case 'destroy':
 
@@ -33,7 +77,7 @@ switch ($_GET['action']) {
                 $filterSql = ' WHERE '.$filterData[$i]->property.' '.$filterData[$i]->operator.' '.$filterData[$i]->value.' ';
             }
         }
-        $sql = "SELECT SQL_CALC_FOUND_ROWS `id`, `title`, `subtitle`, `order`, `icon`, `published` FROM `categories` ".$filterSql." ".$sortSql." ";
+        $sql = "SELECT SQL_CALC_FOUND_ROWS `id`, `title`, `subtitle`, `order`, `icon`, `published`, `alias`, !general AS general FROM `categories` ".$filterSql." ".$sortSql." ";
         $result = $database->query($sql);
         $totalQuery = 'SELECT FOUND_ROWS()';
         $totalResult = $database->query($totalQuery);

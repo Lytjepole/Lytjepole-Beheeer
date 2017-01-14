@@ -7,6 +7,35 @@ Ext.define('LPB.view.admin.maintenance.settings.Categories', {
     store: 'Categories',
     hideHeaders: true,
 
+    reference: 'categoriesgrid',
+
+    listeners: {
+        itemdblclick: 'onItemCategoryDblClick'
+    },
+
+    dockedItems: [{
+        xtype: 'toolbar',
+        dock: 'top',
+        items: [{
+            iconCls: 'fa fa-plus',
+            handler: 'onAddCategoryBtnClick'
+        }, {
+            iconCls: 'fa fa-edit',
+            handler: 'onEditCategoryBtnClick',
+            bind: {
+                disabled: '{!categoriesgrid.selection}'
+            }
+        }, {
+            iconCls: 'fa fa-trash',
+            bind: {
+                disabled: '{!categoriesgrid.selection}'
+            }
+        }]
+    }, {
+        xtype: 'statusbar',
+        dock: 'bottom'
+    }],
+
     columns: [{
         xtype: 'rownumberer',
         width: 35
@@ -27,11 +56,11 @@ Ext.define('LPB.view.admin.maintenance.settings.Categories', {
         }, {
             iconCls: 'x-fa fa-edit',
             tooltip: 'Categorie wijzigen...',
-            //handler: 'onActionEditTplClick'
+            handler: 'onActionEditCategoryClick'
         }, {
             iconCls: 'x-fa fa-remove',
             tooltip: 'Categorie verwijderen...',
-            //handler: 'onActionDeleteTplClick'
+            handler: 'onActionDeleteCategoryClick'
         }, {
             iconCls: 'x-fa fa-arrow-up',
             tooltip: 'move up',

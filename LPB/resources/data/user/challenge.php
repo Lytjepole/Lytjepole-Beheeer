@@ -7,7 +7,7 @@
  */
 
 require('../connections/mysql.php');
-require('../php/common/sha256.php');
+//require('../php/common/sha256.php');
 
 session_start();
 //sleep(2);
@@ -17,7 +17,9 @@ $sql = "DELETE FROM `challenges` WHERE `timestamp` < '".time()."' or `sessionId`
 $database->query($sql);
 
 // generate challenge
-echo $challenge = SHA256::hash(uniqid(mt_rand(), true));
+//echo $challenge = SHA256::hash(uniqid(mt_rand(), true));
+echo $challenge = hash('sha256' ,uniqid(mt_rand(), true));
+
 
 // insert new challenge into database, valid for 6 minutes
 $sql = "INSERT INTO `challenges` (`sessionId`, `challenge`, `timestamp`) VALUES ('".session_id()."', '".$challenge."', '".(time() + 360)."')";

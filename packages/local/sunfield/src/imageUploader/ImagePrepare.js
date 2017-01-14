@@ -21,14 +21,13 @@ Ext.define('Ext.sunfield.imageUploader.ImagePrepare', {
 
     layout: {
         type: 'hbox'
-        //align: 'stretch'
     },
 
     listeners: {
         beforeclose: function (win) {
             Ext.Msg.confirm({
                 title: 'Sluit editor?',
-                msg: 'Afsluiten?',
+                msg: 'Editor afsluiten?',
                 icon: Ext.Msg.QUESTION,
                 buttons: Ext.Msg.YESNO,
                 fn: function (btn) {
@@ -39,7 +38,6 @@ Ext.define('Ext.sunfield.imageUploader.ImagePrepare', {
                 }
             });
             return false;
-
         }
     },
 
@@ -53,7 +51,7 @@ Ext.define('Ext.sunfield.imageUploader.ImagePrepare', {
             tmpDir: this.tmpDir,
             tmpName: this.tmpName,
             uploadDir: this.uploadDir,
-            imageFilename: this.imageFilename,
+            imageFilename: this.originalFilename,
             originalFilename: this.originalFilename,
             imageSize: this.imageSize,
             previewSize: this.previewSize,
@@ -62,7 +60,8 @@ Ext.define('Ext.sunfield.imageUploader.ImagePrepare', {
             imageProcessor: this.imageProcessor,
             thumbnailSize: this.thumbnailSize,
             thumbnailDir: this.thumbnailDir,
-            imagesStore: this.imagesStore
+            imagesStore: this.imagesStore,
+            userId: this.userId
         }, {
             xtype: 'panel',
             flex: 1

@@ -3,8 +3,8 @@
  * calls Ext.application(). This is the ideal place to handle application launch and
  * initialization details.
  */
-Ext.define('LPB.Application', {
-    extend: 'Ext.app.Application',
+Ext.define("LPB.Application", {
+    extend: "Ext.app.Application",
 
     name: 'LPB',
 
@@ -19,7 +19,8 @@ Ext.define('LPB.Application', {
         'CalendarItem',
         'MoreItem',
         'Category',
-        'Group'
+        'Group',
+        'Template'
     ],
 
     stores: [
@@ -32,7 +33,8 @@ Ext.define('LPB.Application', {
         'LPB.store.Items',
         'MoreItems',
         'Categories',
-        'Groups'
+        'Groups',
+        'Templates'
     ],
 
     //defaultToken: 'home',
@@ -43,6 +45,82 @@ Ext.define('LPB.Application', {
             sessionHash,
             jsonResponse,
             userId;
+
+        // declare global vtypes
+        Ext.apply(Ext.form.field.VTypes, {
+            singleDayEventText: 'Eindtijd moet na begintijd liggen',
+            singleDayEvent: function () { // event on single day: 1) endtime > begintime 2) begindate >= today
+                var form = Ext.getCmp('additemform').getForm(),
+                    beginDateField = form.findField('beginDate'),
+                    beginTimeField = form.findField('beginTime'),
+                    endDateField = form.findField('endDate'),
+                    endTimeField = form.findField('endTime'),
+                    result;
+
+                beginDateField.clearInvalid();
+                result = (endTimeField.getValue() > beginTimeField.getValue());
+
+                if (result) {
+                    beginDateField.clearInvalid();
+                    beginTimeField.clearInvalid();
+                    endDateField.clearInvalid();
+                    endTimeField.clearInvalid();
+                } else {
+                    beginDateField.clearInvalid();
+                    endDateField.clearInvalid();
+                    beginTimeField.markInvalid('Eindtijd moet na begintijd liggen');
+                    endTimeField.markInvalid('Eindtijd moet na begintijd liggen');
+                }
+                Ext.getCmp('adddatebtn').setDisabled(!result);
+
+                return result;
+            },
+
+            multiDayEventText: 'Einddatum moet na begindatum liggen',
+            multiDayEvent: function () { // event on multiple days: 1) enddate > begindate
+                var form = Ext.getCmp('additemform').getForm(),
+                    beginDateField = form.findField('beginDate'),
+                    beginTimeField = form.findField('beginTime'),
+                    endDateField = form.findField('endDate'),
+                    endTimeField = form.findField('endTime'),
+                    result;
+
+                result = (endDateField.getValue() > beginDateField.getValue());
+
+                if (result) {
+                    beginDateField.clearInvalid();
+                    beginTimeField.clearInvalid();
+                    endDateField.clearInvalid();
+                    endTimeField.clearInvalid();
+                } else {
+                    beginTimeField.clearInvalid();
+                    endTimeField.clearInvalid();
+                    beginDateField.markInvalid('Einddatum moet na begindatum liggen');
+                    endDateField.markInvalid('Einddatum moet na begindatum liggen');
+                }
+
+                Ext.getCmp('adddatebtn').setDisabled(!result);
+
+                return result;
+            },
+
+            templateTimeText: 'Eindtijd moet na begintijd liggen',
+            templateTime: function (value, field) {
+                var form = field.up('form'),
+                    beginTimeField = form.getForm().findField('beginTime'),
+                    endTimeField = form.getForm().findField('endTime');
+
+                if (beginTimeField.getValue() >= endTimeField.getValue()) {
+                    endTimeField.markInvalid('Eindtijd moet na begintijd liggen');
+                    beginTimeField.markInvalid('Eindtijd moet na begintijd liggen');
+                    return false;
+                } else {
+                    beginTimeField.clearInvalid();
+                    endTimeField.clearInvalid();
+                    return true;
+                }
+            }
+        });
 
 
         // step 1: check if localStorage values are present
@@ -93,20 +171,19 @@ Ext.define('LPB.Application', {
                 // choose main layout by accesslevel
                 switch (user.get('accessLevel')) {
                     case 1: // admin
-                        page = 'admin.Main';
-                        break; // superuser
-                    case 2:
-                        page = 'admin.Main';
+                        page = 'LPB.view.admin.Main';
                         break;
-                    case 3:
-                        page = 'user.User';
+                    case 2: // superuser
+                        page = 'LPB.view.admin.Main';
                         break;
-                    case 4: // user
-                        page = 'user.User';
+                    case 3: // user
+                        page = 'LPB.view.user.User';
+                        break;
+                    case 4: // spare
+                        page = 'LPB.view.user.User';
                         break;
                 }
-                Ext.create('LPB.view.admin.Main', {
-                    //xtype: page,
+                Ext.create(page, {
                     viewModel: {
                         data: {
                             currentUser: user.data

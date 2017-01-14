@@ -7,7 +7,7 @@
  */
 session_start();
 require('../connections/mysql.php');
-require('../php/common/sha256.php');
+//require('../php/common/sha256.php');
 
 
 function getUserImage($imageId, $database)
@@ -156,7 +156,7 @@ switch ($_GET['action']) {
         // create new user in database
         // TODO cleanstring and add prepared statements
         sleep(2);
-        $rawData = $GLOBALS['HTTP_RAW_POST_DATA'];
+        $rawData = file_get_contents("php://input");
         $tmp = json_decode($rawData);
         $data = $tmp->user;
 
@@ -208,7 +208,7 @@ switch ($_GET['action']) {
         }
         break;
     case 'update':
-        $rawdata = $GLOBALS['HTTP_RAW_POST_DATA'];
+        $rawdata = file_get_contents("php://input");
         $tmp = json_decode($rawdata);
         $data = $tmp->user;
         for ($i = 0; $i < count($data); $i++) {
@@ -222,9 +222,10 @@ switch ($_GET['action']) {
             $city = $data[$i]->city;
             $accessLevel = $data[$i]->accessLevel;
             $enabled = $data[$i]->enabled;
+            if($enabled != 1) {$enabled = 0;}
             $lat = $data[$i]->lat;
             $lng = $data[$i]->lng;
-            $imageId = $data[$i]->imageId;
+            if ($data[$i]->imageId == null) {$imageId = 0;} else {$imageId = $data[$i]->imageId;}
 
             $user = getUser($userId, $database);
             $currentAccessLevel = $user->accessLevel.' ';
@@ -260,7 +261,7 @@ switch ($_GET['action']) {
         }
         break;
     case 'destroy':
-        $rawdata = $GLOBALS['HTTP_RAW_POST_DATA'];
+        $rawdata = file_get_contents("php://input");
         $tmp = json_decode($rawdata);
         $data = $tmp->user;
 

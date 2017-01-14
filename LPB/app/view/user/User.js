@@ -12,6 +12,7 @@ Ext.define('LPB.view.user.User', {
         'LPB.view.user.userlocations.UserLocations',
         'LPB.view.user.userstats.UserStats',
         'LPB.view.user.useritems.UserItems',
+        'LPB.view.user.usertemplates.UserTemplates',
         'LPB.view.user.pages.Error404Window'
     ],
 
@@ -25,6 +26,11 @@ Ext.define('LPB.view.user.User', {
 
     listeners: {
         render: 'onMainViewRender'
+    },
+
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
     },
 
     items: [{

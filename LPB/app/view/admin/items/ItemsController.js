@@ -14,7 +14,6 @@ Ext.define('LPB.view.admin.items.ItemsController', {
 
     onAdditemWindowBeforeClose: function (win) {
         var refs = this.getReferences();
-        console.log(arguments);
         if (refs.additemform.isDirty()) {
             Ext.Msg.confirm(
                 'Venster sluiten?',
@@ -43,11 +42,6 @@ Ext.define('LPB.view.admin.items.ItemsController', {
             });
         } else {
             store.removeFilter('userId');
-            // store.filter({
-            //     property: 'userId',
-            //     operator: '>=',
-            //     value: 0
-            // });
         }
 
     },
@@ -75,7 +69,6 @@ Ext.define('LPB.view.admin.items.ItemsController', {
     onDateFilterReset: function (tool) {
         var refs = this.getView().getReferences();
         console.log(refs, tool);
-        // [Ext.Date.format(new Date(), "j-n-Y"), Ext.Date.format(Ext.Date.add(new Date(), Ext.Date.MONTH, 12), "j-n-Y")]
         refs.datesfilter.setValue([Ext.Date.format(Ext.Date.clearTime(new Date()), "U"), Ext.Date.format(Ext.Date.add(new Date(), Ext.Date.MONTH, 12), "U")]);
         this.onDateFilterChanged(refs.datesfilter);
     },
@@ -104,7 +97,7 @@ Ext.define('LPB.view.admin.items.ItemsController', {
 
     onActionHighlightClick: function (view, rowIndex, colIndex, item, e, record) {
         //console.log(record);
-        record.set('highlight', !record.get('highlight'));
+        record.set("highlight", !record.get('highlight'));
         record.save();
     },
 
@@ -150,8 +143,74 @@ Ext.define('LPB.view.admin.items.ItemsController', {
         });
     },
 
-    onActionCopyNewClick: function (view, rowIndex, colIndex, item, e, record) {
+    onTemplatesBtnClick: function (btn) {
+        var refs = this.getView().getReferences(),
+            items,
+            menu,
+            submenu;
 
+        Ext.Ajax.request({
+            url: 'resources/data/template/template.php?action=getUserTemplates',
+            success: function (response, opts) {
+                items = Ext.JSON.decode(response.responseText);
+                menu = Ext.create('Ext.menu.Menu', {
+                    plain: true
+                });
+
+                Ext.Object.each(items.items, function (item, value, items) {
+                    menu.add({text: item, reference: item});
+                    submenu = new Ext.menu.Menu({
+                        plain: true,
+                        listeners: {
+                            click: 'onTemplateMenuClick'
+                        }
+                    });
+
+                    for (i = 0;i < value.length; i++) {
+                        item = new Ext.menu.Item({
+                            text: value[i].title,
+                            value: value[i].id
+                        });
+                        submenu.add(item);
+                    }
+                    menu.items.items[menu.items.items.length -1].setMenu(submenu);
+                });
+                refs.templateBtn.setMenu(menu);
+
+            }
+        });
+    },
+
+    onTemplateMenuClick: function (menu , item , e , eOpts) {
+        var refs = this.getReferences(),
+            template;
+
+        template = new LPB.model.Template({id: item.getValue()});
+        template.load({
+            success: function (record) {
+                beginDate = new Date();
+                beginTime = record.get('beginTime');
+                beginDate.setHours(beginTime.substring(0,2), beginTime.substring(3,5));
+                endDate = new Date();
+                endTime = record.get('endTime');
+                endDate.setHours(endTime.substring(0,2), endTime.substring(3,5))
+                record.set('beginDate', beginDate);
+                record.set('endDate', endDate);
+                refs.additemwindow.record = record;
+                refs.additemwindow.addItemFormAfterRender(refs.additemform, 'tpl');
+            }
+        });
+    },
+
+    onActionCopyNewClick: function (view, rowIndex, colIndex, item, e, record) {
+        var addItemWindow;
+
+        addItemWindow = Ext.create({
+            xtype: 'additemwindow',
+            record: record
+        });
+        addItemWindow.show();
+        this.getView().add(addItemWindow);
     },
 
     onAddItemBtnClick: function () {
@@ -165,6 +224,7 @@ Ext.define('LPB.view.admin.items.ItemsController', {
         });
         addItemWindow.show();
         this.getView().add(addItemWindow);
+        this.onTemplatesBtnClick();
     },
 
     onSubmitAddItemForm: function () {
@@ -176,17 +236,26 @@ Ext.define('LPB.view.admin.items.ItemsController', {
             values = form.getValues(),
             data = form.getForm().findField('dates').getSubmitValue(),
             count = data.getCount(),
+            item,
+            items,
             i;
 
         values.userId = me.getViewModel().data.currentUser.id;
+
         if (form.isValid() && form.isDirty()) {
             // process form values
             for (i = 0; i < count; i++) {
-                values.id = null;
+                values.id = '';
                 values.beginDate = data.getAt(i).get('beginDate');
                 values.endDate = data.getAt(i).get('endDate');
-                store.add(values);
+
+                item = Ext.create('LPB.model.CalendarItem',
+                    values
+                    );
+                items = item.copy(null);
+                store.add(items);
             }
+
             store.sync({
                 success: function () {
                     me.getView().remove('additemwindow');
@@ -197,7 +266,6 @@ Ext.define('LPB.view.admin.items.ItemsController', {
                     console.log(arguments);
                 }
             });
-            //refs.itemsgrid.updateLayout();
         }
     },
 
@@ -210,11 +278,40 @@ Ext.define('LPB.view.admin.items.ItemsController', {
     },
 
     editItem: function (record) {
-        console.log(record);
-        editItemWindow = Ext.create('edititemwindow', {
-            title: record.get('title')
-        });
+        var editItemWindow;
 
+        editItemWindow = Ext.create('edititemwindow', {
+            title: 'Item "' + record.get('title') + '" wijzigen'
+        });
+        editItemWindow.record = record;
         editItemWindow.show();
+        this.getView().add(editItemWindow);
+    },
+
+    onSubmitEditItemForm: function () {
+        var me = this,
+            refs = this.getReferences(),
+            store = Ext.getStore('Items'),
+            form = refs.additemform,
+            record = form.getRecord(),
+            values = form.getValues(),
+            data = form.getForm().findField('dates').getSubmitValue();
+
+        if (form.isValid() && form.isDirty()) {
+            console.info('saving data');
+            values.beginDate = data.getAt(0).get('beginDate');
+            values.endDate = data.getAt(0).get('endDate');
+            record.set(values);
+            record.save({
+                callback: function () {
+                    store.reload();
+                    me.getView().remove(refs.edititemwindow);
+                }
+            });
+        }
+    },
+
+    onEditItemWindowBeforeClose: function (win) {
+        //console.log(arguments);
     }
 });

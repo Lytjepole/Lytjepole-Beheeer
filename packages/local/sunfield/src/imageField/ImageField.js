@@ -8,6 +8,15 @@ Ext.define('Ext.sunfield.imageField.ImageField', {
     requires: [
         'Ext.sunfield.imageField.ImagePicker'
     ],
+    // configs expected:
+    store: null,
+    imagesDir: 'resources/images/items/', // default
+    tmpDir: 'resources/images/temp/', // default
+    setThumbnail: true,  // set false if no thumbnail required
+    thumbnailSize: [75, 75], // default thumbnailsize 75 x 75 px
+    imageSize: [150, 150], // default imageSize 150 x 150 px
+    minRes: [600, 600], // default minumum resolution for source file
+    maxFileSize: 10000, //default max file size: 10kB
 
     layout: 'anchor',
 
@@ -26,7 +35,7 @@ Ext.define('Ext.sunfield.imageField.ImageField', {
                 callback: function (records, operation, success) {
                     imageId = store.findExact('id', value);
                     me.imageData = records[imageId];
-                    me.image.setSrc('resources/images/users/' + me.imageData.get('imagePath'));
+                    me.image.setSrc(me.imagesDir + me.imageData.get('imagePath'));
                 }
             });
         } else {
@@ -39,8 +48,12 @@ Ext.define('Ext.sunfield.imageField.ImageField', {
     },
 
     initComponent: function () {
-        console.info('imagefield init', this.store);
-        var me = this;
+        var me = this,
+            store = Ext.getStore(this.store);
+
+        if (store.isLoaded() === false) {
+            store.load();
+        }
 
         me.items = me.setupItems();
 
@@ -52,6 +65,9 @@ Ext.define('Ext.sunfield.imageField.ImageField', {
         Ext.create('Ext.sunfield.imageField.ImagePicker', {
             autoShow: true,
             store: this.store,
+            currentImageId: this.value,
+            imagesDir: this.imagesDir,
+
             listeners: {
                 scope: this,
                 imageselected: this.selectImage
@@ -69,7 +85,7 @@ Ext.define('Ext.sunfield.imageField.ImageField', {
         me.image = Ext.create('Ext.Img', {
             src: Ext.getResourcePath('images/user.jpg', null, 'sunfield'),
             tooltip: 'klik om een afbeelding te selecteren...',
-            alt: 'user logo',
+            alt: 'default logo',
             width: 100,
             height: 100,
             style: {

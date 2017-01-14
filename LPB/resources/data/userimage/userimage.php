@@ -129,7 +129,7 @@ switch ($_GET['action']) {
         unlink('../../images/temp/' . $_GET['tmpimage']);
         break;
     case 'create':
-        $rawdata = $GLOBALS['HTTP_RAW_POST_DATA'];
+        $rawdata = file_get_contents("php://input");
         $tmp = json_decode($rawdata);
         $data = $tmp->userimage;
 
@@ -200,7 +200,7 @@ switch ($_GET['action']) {
 
         break;
     case 'destroy';
-        $rawdata = $GLOBALS['HTTP_RAW_POST_DATA'];
+        $rawdata = file_get_contents("php://input");
         $tmp = json_decode($rawdata);
         $data = $tmp->image;
 

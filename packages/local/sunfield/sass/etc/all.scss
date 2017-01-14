@@ -42,3 +42,31 @@
 .infopanel .details-info span {
   display: block;
 }
+
+.mruimageviewer .thumb-wrap {
+  float: left;
+  margin: 4px;
+  margin-right: 0;
+  padding: 5px;
+}
+
+.mruimageviewer .x-view-over {
+  color: #fff;
+  border:1px solid $base-color;
+  background: lighten($base-color, 25%);
+  padding: 4px;
+}
+
+.mruimageviewer .x-item-selected {
+  color: #fff;
+  border: 1px solid lighten($base-color, 10%);
+  background: lighten($base-color, 10%);
+  padding: 4px;
+}
+
+.mruimageviewer .thumb-wrap span {
+  display: block;
+  overflow: hidden;
+  text-align: center;
+  width: 70px; /* for ie to ensure that the text is centered */
+}

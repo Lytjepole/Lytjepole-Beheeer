@@ -28,7 +28,7 @@ Ext.define('LPB.view.admin.home.Home', {
     items: [{
         xtype: 'panel01',
         responsiveCls: 'big-60 small-100',
-        height: 1000
+        height: 400
     }, {
         xtype: 'panel02',
         responsiveCls: 'big-40 small-100',

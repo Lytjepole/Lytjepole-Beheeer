@@ -58,6 +58,12 @@ Ext.define('LPB.store.AdminTreeList', {
             expanded: false,
             selectable: false,
             children: [{
+                text: 'Instellingen',
+                view: 'maintenance.Settings',
+                routeId: 'settings',
+                iconCls: 'right-icon x-fa fa-cog',
+                leaf: true
+            }, {
                 text: 'Gebruikers',
                 view: 'maintenance.UserImages',
                 routeId: 'userimages',
@@ -68,6 +74,12 @@ Ext.define('LPB.store.AdminTreeList', {
                 view: 'maintenance.LocationImages',
                 routeId: 'locationimages',
                 iconCls: 'right-icon x-fa fa-map-marker',
+                leaf: true
+            }, {
+                text: 'Templates',
+                view: 'maintenance.Templates',
+                routeId: 'templates',
+                iconCls: 'right-icon x-fa fa-file-text-o',
                 leaf: true
             }]
         }, {

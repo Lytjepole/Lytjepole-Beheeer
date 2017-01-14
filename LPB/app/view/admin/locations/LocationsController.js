@@ -9,7 +9,7 @@ Ext.define('LPB.view.admin.locations.LocationsController', {
      * Called when the view is created
      */
     init: function () {
-
+        Ext.getStore('UsersStore').load();
     },
 
     onAddItemBtnClick: function () {
@@ -20,9 +20,11 @@ Ext.define('LPB.view.admin.locations.LocationsController', {
         var win = Ext.create({
             xtype: 'addlocationwindow',
             autoShow: true,
-            width: 700
+            width: 700,
+            //userId: this.getViewModel().data.currentUser.id,
         });
         this.getView().add(win);
+        win.down('form').getForm().findField('userId').setValue(this.getViewModel().data.currentUser.id);
     },
 
     onSaveNewLocationBnClick: function (btn) {
@@ -126,6 +128,8 @@ Ext.define('LPB.view.admin.locations.LocationsController', {
             win = refs.editlocationwindow,
             record = form.getRecord(),
             values = form.getValues();
+
+        //values.ownerId = me.getViewModel().data.currentUser.id;
         console.log('save changes...', refs);
         if (form.isValid() && form.isDirty()) {
             console.log('go save');
@@ -143,5 +147,25 @@ Ext.define('LPB.view.admin.locations.LocationsController', {
             console.log('just close');
             this.getView().remove(win);
         }
+    },
+
+    onDeleteItemBtnClick: function (btn) {
+        var me = this,
+            refs = me.getReferences(),
+            record = refs.locationsview.getSelectionModel().getSelection()[0],
+            store = refs.locationsview.getStore();
+
+        Ext.Msg.show({
+            title: 'Locatie verwijderen',
+            message: 'Locatie "' + record.get('name') + '" verwijderen?',
+            buttons: Ext.Msg.YESNOCANCEL,
+            icon: Ext.Msg.QUESTION,
+            fn: function (btn) {
+                if (btn === 'yes') {
+                    store.remove(record);
+                    store.sync();
+                }
+            }
+        });
     }
 });

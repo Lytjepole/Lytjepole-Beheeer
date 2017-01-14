@@ -15,6 +15,7 @@ Ext.define('LPB.view.admin.locations.windows.AddLocation', {
 
     items: [{
         xtype: 'form',
+        userId: this.userId,
         reference: 'addlocationform',
         id: 'addlocationform',
         layout: 'anchor',
@@ -78,7 +79,7 @@ Ext.define('LPB.view.admin.locations.windows.AddLocation', {
         }, {
             name: 'email',
             fieldLabel: 'Email',
-            emptyText: 'email',
+            emptyText: 'email (info@website.nl)',
             vtype: 'email'
         }, {
             name: 'phone',
@@ -87,7 +88,7 @@ Ext.define('LPB.view.admin.locations.windows.AddLocation', {
         }, {
             name: 'www',
             fieldLabel: 'Website',
-            emptyText: 'website',
+            emptyText: 'website (http://www.website.nl)',
             vtype: 'url'
         }, {
             name: 'imageId',
@@ -95,6 +96,15 @@ Ext.define('LPB.view.admin.locations.windows.AddLocation', {
             fieldLabel: 'Afbeelding',
             store: 'LocationImages',
             imagesDir: 'resources/images/locations/'
+        }, {
+            name: 'userId',
+            value: this.userId,
+            fieldLabel: 'Gebruiker',
+            xtype: 'combobox',
+            store: 'UsersStore',
+            valueField: 'id',
+            displayField: 'fullName',
+            forceSelection: true
         }],
 
         buttons: [{

@@ -46,6 +46,9 @@ Ext.define('LPB.view.admin.locations.Locations', {
             }
         }, {
             text: 'Verwijder',
+            listeners: {
+                click: 'onDeleteItemBtnClick'
+            },
             bind: {
                 disabled: '{!locationsview.selection}'
             }

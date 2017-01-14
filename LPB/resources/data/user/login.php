@@ -12,7 +12,7 @@
  */
 session_start();
 require('../connections/mysql.php');
-require('../php/common/sha256.php');
+//require('../php/common/sha256.php');
 
 $userName = $database->real_escape_string($_POST['userName']);
 $response = $database->real_escape_string($_POST['response']);
@@ -50,7 +50,7 @@ if( isset($userName) && isset($response)) {
                 if($userStmt->num_rows) {
                     // calculate hash from given credentials and compare with database
                     $string = $userName.':'.$password.':'.$challenge;
-                    $expectedResponse = SHA256::hash($string);
+                    $expectedResponse = hash('sha256',$string);
 
                     if($expectedResponse == $response && $enabled) { // compare calculated hash from database with calculated hash from user input
                         // credentials ok

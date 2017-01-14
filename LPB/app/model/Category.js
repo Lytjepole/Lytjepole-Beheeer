@@ -4,6 +4,9 @@ Ext.define('LPB.model.Category', {
     proxy: {
         reader: {
             rootProperty: 'category'
+        },
+        writer: {
+            rootProperty: 'category'
         }
     },
 
@@ -21,6 +24,9 @@ Ext.define('LPB.model.Category', {
         type: 'string'
     }, {
         name: 'published',
+        type: 'boolean'
+    }, {
+        name: 'general',
         type: 'boolean'
     }]
 });

@@ -87,6 +87,14 @@ Ext.define('LPB.view.admin.locations.windows.EditLocation', {
             fieldLabel: 'Afbeelding',
             store: 'LocationImages',
             imagesDir: 'resources/images/locations/'
+        }, {
+            name: 'userId',
+            fieldLabel: 'Gebruiker',
+            xtype: 'combobox',
+            store: 'UsersStore',
+            valueField: 'id',
+            displayField: 'fullName',
+            forceSelection: true
         }],
 
         buttons: [{

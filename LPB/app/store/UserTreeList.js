@@ -15,6 +15,12 @@ Ext.define('LPB.store.UserTreeList', {
             iconCls: 'right-icon new-icon x-fa fa-home',
             routeId: 'home'
         }, {
+            text: 'Agenda',
+            view: 'useritems.UserItems',
+            leaf: true,
+            iconCls: 'right-icon x-fa fa-calendar',
+            routeId: 'items'
+        }, {
             text: 'Locaties',
             view: 'userlocations.UserLocations',
             leaf: true,
@@ -27,11 +33,11 @@ Ext.define('LPB.store.UserTreeList', {
             iconCls: 'right-icon x-fa fa-image',
             routeId: 'images'
         }, {
-            text: 'Agenda',
-            view: 'useritems.UserItems',
+            text: 'Templates',
+            view: 'usertemplates.UserTemplates',
             leaf: true,
-            iconCls: 'right-icon x-fa fa-calendar',
-            routeId: 'items'
+            iconCls: 'right-icon x-fa fa-file-text-o',
+            routeId: 'templates'
         }, {
             text: 'Statistieken',
             view: 'userstats.UserStats',
