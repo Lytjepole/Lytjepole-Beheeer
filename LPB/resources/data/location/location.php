@@ -29,6 +29,7 @@ switch ($_GET['action']) {
         $rawdata = file_get_contents("php://input");
         $tmp = json_decode($rawdata);
         $data = $tmp->location;
+
         $sql = "INSERT INTO `locations` (`name`, `ownerId`, `defaultLoc`, `street`, `number`, `zip`, `city`, `phone`, `www`, `email`, `lat`, `lng`, `fullAddress`, `markerType`, `imageId`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $database->prepare($sql);
         $stmt->bind_param("siissssssssssii", $name, $ownerId, $defaultLoc, $street, $number, $zip, $city, $phone, $www, $email, $lat, $lng, $fullAddress, $markerType, $imageId);
@@ -46,8 +47,8 @@ switch ($_GET['action']) {
             $phone = $data[$i]->phone;
             $www = $data[$i]->www;
             $email = $data[$i]->email;
-            $lat = $data[$i]->lat;
-            $lng = $data[$i]->lng;
+            if ($data[$i]->lat < 1) {$lat = 0;} else {$lat = $data[$i]->lat;}
+            if ($data[$i]->lng < 1) {$lng = 0;} else {$lng = $data[$i]->lng;}
             $fullAddress = $data[$i]->fullAddress;
             $markerType = 0;
             if($data[$i]->imageId == null) {$imageId = 1;} else {$imageId = $data[$i]->imageId;}
@@ -102,8 +103,8 @@ switch ($_GET['action']) {
 
         for ($i = 0; $i < count($data); $i++) {
             // delete location
-            echo $sql = "DELETE FROM `locations` WHERE `id` = '".$data[$i]->id."'";
-            print_r($database->query($sql));
+            $sql = "DELETE FROM `locations` WHERE `id` = '".$data[$i]->id."'";
+            $database->query($sql);
             // clear item location
             $itemSql = "UPDATE `items` SET `locationId` = '0', `shortLocation` = '-' WHERE `id` = '".$data[$i]->id."'";
             $database->query($itemSql);
@@ -111,6 +112,7 @@ switch ($_GET['action']) {
             $tempSql = "UPDATE `templates` SET `locationId` = '0', `shortLocation` = '-' WHERE `id` = '".$data[$i]->id."'";
             $database->query($tempSql);
         }
+        echo '{"success": true}';
 
         break;
     default:

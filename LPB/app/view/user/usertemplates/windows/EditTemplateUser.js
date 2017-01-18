@@ -20,7 +20,6 @@ Ext.define('LPB.view.user.usertemplates.windows.EditTemplateUser', {
     },
 
     initComponent: function () {
-        //Ext.getStore('allLocations').load();
 
         this.items = [{
             xtype: 'form',

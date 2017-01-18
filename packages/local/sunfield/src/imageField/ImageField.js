@@ -17,6 +17,7 @@ Ext.define('Ext.sunfield.imageField.ImageField', {
     imageSize: [150, 150], // default imageSize 150 x 150 px
     minRes: [600, 600], // default minumum resolution for source file
     maxFileSize: 10000, //default max file size: 10kB
+    userId: null,
 
     layout: 'anchor',
 
@@ -67,7 +68,7 @@ Ext.define('Ext.sunfield.imageField.ImageField', {
             store: this.store,
             currentImageId: this.value,
             imagesDir: this.imagesDir,
-
+            userId: this.userId,
             listeners: {
                 scope: this,
                 imageselected: this.selectImage
@@ -88,6 +89,7 @@ Ext.define('Ext.sunfield.imageField.ImageField', {
             alt: 'default logo',
             width: 100,
             height: 100,
+            userId: me.userId,
             style: {
                 clear: 'both',
                 display: 'block',

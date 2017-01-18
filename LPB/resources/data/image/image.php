@@ -137,7 +137,7 @@ switch ($_GET['action']) {
             $tmpName = $data[0]->params->tmpName;
             //$title = $_POST['title'];
             //$artist = $_POST['artist'];
-            //$ownerId = $_POST['ownerId'];
+            $ownerId = $data[$i]->ownerId;
             $cropx = $data[$i]->params->x;
             $cropy = $data[$i]->params->y;
             $cropWidth = $data[$i]->params->cropWidth;
@@ -189,7 +189,7 @@ switch ($_GET['action']) {
 
         //update database
 
-        $sql = "INSERT INTO `images` (`imageName`, `imagePath`, `artist`, `ownerId`, `recentlyUsed`) VALUES ('".$imageTitle."', '".$testName."', '', '".$userId."', NOW());";
+        $sql = "INSERT INTO `images` (`imageName`, `imagePath`, `artist`, `ownerId`, `recentlyUsed`) VALUES ('".$imageTitle."', '".$testName."', '', '".$ownerId."', NOW());";
         $database->query($sql);
         }
 

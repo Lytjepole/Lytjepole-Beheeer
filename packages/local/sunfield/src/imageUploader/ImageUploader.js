@@ -64,7 +64,7 @@ Ext.define('Ext.sunfield.imageUploader.ImageUploader', {
 
     loadJQuery: function () {
         //load scripts for jQuery & Jcrop
-        console.log('loading scripts');
+        console.info('loading scripts...');
         if (typeof jQuery === 'undefined') {
             // jQuery is not loaded
             var jQueryScript = document.createElement('script'),
@@ -75,7 +75,7 @@ Ext.define('Ext.sunfield.imageUploader.ImageUploader', {
             jQueryScript.type = 'text/javascript';
             jQueryScript.onload = function (me) {
                 // after jQuery load init jCrop
-                console.log('jQuery loaded!');
+                console.info('jQuery loaded!');
                 jCropScript.type = 'text/javascript';
                 jCropScript.onload = function (me) {
                     console.info('jCrop loaded!');

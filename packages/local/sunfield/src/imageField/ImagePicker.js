@@ -50,7 +50,8 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
                             minImageWidth: 600,
                             minImageHeight: 600,
                             imageProcessor: 'resources/data/image/image.php',
-                            imagesStore: pwin.store
+                            imagesStore: pwin.store,
+                            userId: pwin.userId,
                         });
                         win.show();
                         store = Ext.getStore(pwin.store);
@@ -165,11 +166,10 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
                 currentImageId = win.currentImageId,
                 index,
                 record;
-            console.log('preselect image');
+            console.info('load preselected image');
             index = store.findExact('id', currentImageId);
             record = store.getAt(index);
             dataview.setSelection(record);
-            //this.loadRecord(record);
         }
     },
 

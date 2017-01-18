@@ -137,7 +137,7 @@ switch ($_GET['action']) {
             $tmpName = $data[0]->params->tmpName;
             //$title = $_POST['title'];
             //$artist = $_POST['artist'];
-            //$ownerId = $_POST['ownerId'];
+            $ownerId = $data[$i]->ownerId;
             $cropx = $data[$i]->params->x;
             $cropy = $data[$i]->params->y;
             $cropWidth = $data[$i]->params->cropWidth;
@@ -148,6 +148,7 @@ switch ($_GET['action']) {
             $thumbnailWidth = $data[$i]->params->thumbnailWidth;
             $thumbnailHeight = $data[$i]->params->thumbnailHeight;
             $originalFilename = $data[$i]->params->originalFilename;
+            $imageName = $data[$i]->imageName;
 
             $image = new Imagick('../../images/temp/' . $tmpName);
 
@@ -187,15 +188,12 @@ switch ($_GET['action']) {
 
             //update database
 
-            $sql = "INSERT INTO `locationImages` (`imageName`, `imagePath`, `artist`, `ownerId`, `recentlyUsed`) VALUES ('test', '".$testName."', 'pipo', '1', NOW());";
+            $sql = "INSERT INTO `locationImages` (`imageName`, `imagePath`, `artist`, `ownerId`, `recentlyUsed`) VALUES ('".$imageName."', '".$testName."', '', '".$ownerId."', NOW());";
             $database->query($sql);
         }
 
-        echo '{"success": true, "locationimage":{"id": '.$database->insert_id.', "imageName":"kiekeboe"}}';
+        echo '{"success": true, "locationimage":{"id": '.$database->insert_id.', "imageName":"'.$imageName.'"}}';
         break;
-//    case 'create': // create new image
-//        echo '{"success": false}';
-//        break;
     case 'update':
 
         break;

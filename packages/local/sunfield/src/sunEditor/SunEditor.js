@@ -16,7 +16,6 @@ Ext.define('Ext.sunfield.sunEditor.SunEditor', {
     getErrors: function (value) {
         var me = this,
             errors = [];
-        //console.log(me.value);
         if (value < 1) {
             errors.push('Tekst mag niet leeg zijn...');
         }

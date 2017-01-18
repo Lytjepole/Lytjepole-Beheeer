@@ -132,10 +132,13 @@ Ext.define('Ext.sunfield.imageUploader.ImageCropper', {
         me.cropData.originalFilename = me.originalFilename;
         me.cropData.imageTitle = imageTitle;
         me.cropData.userId = me.userId;
+        me.imageName = imageTitle;
 
         store.suspendEvents(true);
         store.add({
             imagePath: me.cropData.originalFilename,
+            ownerId: me.userId,
+            imageName: me.imageName,
             params: me.cropData
         });
         store.sync({
