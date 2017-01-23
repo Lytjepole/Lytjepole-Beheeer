@@ -36,7 +36,11 @@ Ext.define('LPB.view.user.userlocations.UserLocationsController', {
 
         console.log(refs);
         store.add(values);
-        store.sync();
+        store.sync({
+            success: function () {
+                win.destroy();
+            }
+        });
     },
 
     onDeleteLocationBtnClick: function (btn) {

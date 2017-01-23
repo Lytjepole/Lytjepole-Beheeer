@@ -24,6 +24,7 @@ Ext.application({
         'Ext.sunfield.DateSlider',
         'Ext.sunfield.sunEditor.SunEditor',
         'Ext.sunfield.mruImages.MruImages',
+        'Ext.sunfield.groupEditor.GroupEditor',
         'Ext.ux.form.ItemSelector'
     ]
 

@@ -58,10 +58,15 @@ Ext.define('LPB.view.user.usertemplates.UserTemplatesModel', {
             autoLoad: true,
             pageSize: 0,
             remoteFilter: true,
+            remoteSort: true,
             filters: [{
                 property: 'userId',
                 operator: '=',
                 value: '{currentUser.id}'
+            }],
+            sorters: [{
+                property: 'name',
+                direction: 'ASC'
             }]
         }
 

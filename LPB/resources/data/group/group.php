@@ -1,7 +1,6 @@
 <?php
 session_start();
 require('../connections/mysql.php');
-//require('../php/common/sha256.php');
 
 switch ($_GET['action']) {
     case 'getGroup':
@@ -28,12 +27,67 @@ switch ($_GET['action']) {
         }
         break;
     case 'create':
+        $rawdata = file_get_contents("php://input");
+        $tmp = json_decode($rawdata);
+        $data = $tmp->group;
+
+        $sql = "INSERT INTO `groups` (`name`, `description`, `alias`, `userId`, `imageId`) VALUES (?, ?, ?, ?, ?) ";
+        $stmt = $database->prepare($sql);
+        $stmt->bind_param("sssii", $name, $description, $alias, $userId, $imageId);
+
+        for ($i = 0; $i < count($data); $i++) {
+            $name = $data[$i]->name;
+            $alias = preg_replace('/\s+/', '', strtolower($name));
+            $description = $data[$i]->description;
+            $userId = $data[$i]->userId;
+            $imageId = $data[$i]->imageId;
+
+            $stmt->execute();
+            //print_r($stmt);
+        }
+        echo '{"success": true, "group":[{"id":"'.$stmt->insert_id.'"}]}';
 
         break;
     case 'update':
+        $rawdata = file_get_contents("php://input");
+        $tmp = json_decode($rawdata);
+        $data = $tmp->group;
 
-        break;
+        $sql = "UPDATE `groups` SET `name` = ?, `alias` = ?, `description` = ?, `userId` = ? WHERE `id` = ?";
+        $stmt = $database->prepare($sql);
+        $stmt->bind_param("sssii", $name, $alias, $description, $userId, $id);
+
+        for ($i = 0; $i < count($data); $i++) {
+            $id = $data[$i]->id;
+            $name = $data[$i]->name;
+            $alias = preg_replace('/\s+/', '', strtolower($name));
+            $description = $data[$i]->description;
+            $userId = $data[$i]->userId;
+
+            //print_r($stmt);
+            $stmt->execute();
+        }
+
+        echo '{"success": true}';
+
+            break;
     case 'destroy':
+        $rawdata = file_get_contents("php://input");
+        $tmp = json_decode($rawdata);
+        $data = $tmp->group;
+
+        $sql = "DELETE FROM `groups` WHERE `id` = ?";
+
+        $stmt = $database->prepare($sql);
+        $stmt->bind_param("i", $id);
+
+        for ($i = 0; $i < count($data); $i++) {
+            $id = $data[$i]->id;
+
+            $stmt->execute();
+        }
+
+        echo '{"success": true}';
 
         break;
     default:

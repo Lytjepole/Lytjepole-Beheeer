@@ -279,9 +279,10 @@ Ext.define('LPB.view.user.usertemplates.windows.AddTemplateUser', {
                         msgTarget: 'under',
                         minSelectionsText: 'Selecteer minimaal {0} groep!',
                         maxSelectionsText: 'Selecteer maximaal {0} groep',
-                        // listeners: {
-                        //     afterrender: this.onGroupSelectorRendered
-                        // }
+                        listeners: {
+                            scope: this,
+                            afterrender: this.onGroupSelectorRendered
+                        }
                     }]
                 }, {
                     title: 'Opties',
@@ -326,5 +327,16 @@ Ext.define('LPB.view.user.usertemplates.windows.AddTemplateUser', {
         }]
 
         this.callParent();
+    },
+
+    onGroupSelectorRendered: function (selector) {
+        var me = this,
+            tool;
+        tool = Ext.create('widget.groupeditor', {
+            userId: 174,
+            store: selector.store,
+            selector: selector
+        });
+        selector.fromField.items.items[0].addTool(tool);
     }
 })

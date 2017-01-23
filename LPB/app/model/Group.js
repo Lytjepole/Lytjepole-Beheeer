@@ -4,11 +4,14 @@ Ext.define('LPB.model.Group', {
     proxy: {
         reader: {
             rootProperty: 'group'
+        },
+        writer: {
+            rootProperty: 'group'
         }
     },
 
     fields: [{
-        name: 'title',
+        name: 'name',
         type: 'string'
     }, {
         name: 'subtitle',
