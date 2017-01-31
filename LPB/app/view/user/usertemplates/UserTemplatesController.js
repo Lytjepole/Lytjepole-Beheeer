@@ -86,6 +86,7 @@ Ext.define('LPB.view.user.usertemplates.UserTemplatesController', {
 
         win = Ext.create({
             xtype: 'edittemplateuser',
+            title: 'Template "' + record.get('title') + '" wijzigen',
             userId: this.getViewModel().data.currentUser.id,
             record: record
         });

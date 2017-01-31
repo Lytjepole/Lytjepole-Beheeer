@@ -11,11 +11,6 @@ Ext.define('LPB.view.user.userlocations.UserLocations', {
         'LPB.view.user.userlocations.windows.AddUserLocation'
     ],
 
-    /*
-     Uncomment to give this component an xtype
-     xtype: 'userlocations',
-     */
-
     viewModel: {
         type: 'userlocations'
     },
@@ -32,6 +27,7 @@ Ext.define('LPB.view.user.userlocations.UserLocations', {
     listeners: {
         itemdblclick: 'onLocationDblClick'
     },
+
 
     dockedItems: [{
         xtype: 'toolbar',
@@ -80,11 +76,17 @@ Ext.define('LPB.view.user.userlocations.UserLocations', {
         items: [{
             iconCls: 'x-fa fa-edit',
             tooltip: 'Locatie wijzigen...',
-            handler: 'onActionEditLocationClick'
+            handler: 'onActionEditLocationClick',
+            isDisabled: function (view, rowIndex, colIndex, item, record) {
+                return (record.get('userId') != localStorage.getItem('uid'));
+            }
         }, {
             iconCls: 'x-fa fa-remove',
             tooltip: 'Locatie verwijderen...',
-            handler: 'onActionDeleteLocationClick'
+            handler: 'onActionDeleteLocationClick',
+            isDisabled: function (view, rowIndex, colIndex, item, record) {
+                return (record.get('userId') != localStorage.getItem('uid'));
+            }
         }]
     }]
 });

@@ -44,12 +44,35 @@ Ext.define('LPB.view.user.userlocations.UserLocationsController', {
     },
 
     onDeleteLocationBtnClick: function (btn) {
-        record = this.getView().getSelectionModel().getSelection()[0];
-        this.deleteLocation(record);
+        var userId = this.getViewModel().data.currentUser.id,
+            record = this.getView().getSelectionModel().getSelection()[0];
+
+        if (record.get('userId') === userId) {
+            this.deleteLocation(record);
+        } else {
+            Ext.Msg.alert({
+                title: 'Fout',
+                msg: 'Alleen eigen locaties kunnen worden gewijzigd',
+                icon: Ext.Msg.ERROR,
+                buttons: Ext.Msg.OK
+            });
+        };
     },
 
     onEditLocationBtnClick: function () {
-        this.showEditLocationWindow(this.getView().getSelectionModel().getSelection()[0]);
+        var userId = this.getViewModel().data.currentUser.id,
+            record = this.getView().getSelectionModel().getSelection()[0];
+
+        if (record.get('userId') === userId) {
+            this.showEditLocationWindow(record);
+        } else {
+            Ext.Msg.alert({
+                title: 'Fout',
+                msg: 'Alleen eigen locaties kunnen worden gewijzigd',
+                icon: Ext.Msg.ERROR,
+                buttons: Ext.Msg.OK
+            });
+        }
     },
 
     onActionEditLocationClick: function (view, rowIndex, colIndex, item, e, record, row) {
@@ -57,7 +80,17 @@ Ext.define('LPB.view.user.userlocations.UserLocationsController', {
     },
 
     onLocationDblClick: function (view, record) {
-        this.showEditLocationWindow(record);
+        var userId = this.getViewModel().data.currentUser.id;
+        if (record.get('userId') === userId) {
+            this.showEditLocationWindow(record);
+        } else {
+            Ext.Msg.alert({
+                title: 'Fout',
+                msg: 'Alleen eigen locaties kunnen worden gewijzigd',
+                icon: Ext.Msg.ERROR,
+                buttons: Ext.Msg.OK
+            });
+        }
     },
 
     onActionDeleteLocationClick: function (view, rowIndex, colIndex, item, e, record, row) {
@@ -117,5 +150,9 @@ Ext.define('LPB.view.user.userlocations.UserLocationsController', {
                 }
             }
         });
+    },
+
+    actionColumnDisabled: function () {
+        console.log(arguments);
     }
 });

@@ -312,7 +312,7 @@ switch ($_GET['action']) {
             $stmt->bind_result($id, $userName, $accessLevel, $fullName, $street, $number, $zip, $city, $phone, $email, $created, $lastEdited, $enabled, $lat, $lng, $imageId, $imagePath);
             $stmt->store_result();
             $stmt->fetch();
-            $arr = array('id' => $id, 'userName' => $userName, 'accessLevel' => $accessLevel, 'fullName' => $fullName, 'street' => $street, 'number' => $number, 'zip' => $zip, 'city' => $city, 'phone' => $phone, 'email' => $email, 'created' => $created, 'lastEdited' => $lastEdited, 'enabled' => $enabled, 'lat' => $lat, 'lng' => $lng, 'imageId' => $imageId, `imagePath` => $imagePath);
+            $arr = array('id' => $id, 'userName' => $userName, 'accessLevel' => $accessLevel, 'fullName' => $fullName, 'street' => $street, 'number' => $number, 'zip' => $zip, 'city' => $city, 'phone' => $phone, 'email' => $email, 'created' => $created, 'lastEdited' => $lastEdited, 'enabled' => $enabled, 'lat' => $lat, 'lng' => $lng, 'imageId' => $imageId, 'imagePath' => $imagePath);
 
             if ($stmt->num_rows) {
                 echo '{"success": true, "total": 1, "user":' . json_encode($arr) . '}';

@@ -6,15 +6,31 @@ Ext.define('LPB.view.user.useritems.UserItemsModel', {
     alias: 'viewmodel.useritems',
 
     stores: {
-        /*
-        A declaration of Ext.data.Store configurations that are first processed as binds to produce an effective
-        store configuration. For example:
 
-        users: {
-            model: 'UserItems',
-            autoLoad: true
+        userItems: {
+            model: 'CalendarItem',
+            autoLoad: true,
+            pageSize: 0,
+            remoteFilter: true,
+            remoteSort: true,
+            groupField: 'title',
+            filters: [{
+                property: 'userId',
+                operator: '=',
+                value: '{currentUser.id}'
+            }, {
+                property: 'endDate',
+                operator: '>',
+                value: Ext.Date.clearTime(new Date())
+            }],
+            sorters: [{
+                property: 'title',
+                direction: 'ASC'
+            }, {
+                property: 'endDate',
+                direction: 'ASC'
+            }]
         }
-        */
     },
 
     data: {

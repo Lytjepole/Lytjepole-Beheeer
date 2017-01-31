@@ -11,11 +11,11 @@ Ext.define('LPB.view.user.userlocations.UserLocationsModel', {
             storeId: 'ownLocations',
             autoLoad: true,
             pageSize: 0,
-            filters: [{
-                property: 'userId',
-                operator: '=',
-                value: '{currentUser.id}'
-            }],
+            // filters: [{
+            //     property: 'userId',
+            //     operator: '=',
+            //     value: '{currentUser.id}'
+            // }],
             sorters: [{
                 property: 'name',
                 direction: 'ASC'

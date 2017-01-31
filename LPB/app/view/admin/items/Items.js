@@ -140,6 +140,7 @@ Ext.define('LPB.view.admin.items.Items', {
         }
     }, {
         dataIndex: 'imageId',
+        width: 88,
         renderer: function (value, metaData, record) {
             var id = Ext.id(),
                 image;
@@ -158,7 +159,8 @@ Ext.define('LPB.view.admin.items.Items', {
                                 width: 75,
                                 height: 75,
                                 src: 'resources/images/items/75x75/' + record.get('imagePath'),
-                                alt: record.get('imageName')
+                                alt: record.get('imageName'),
+                                title: record.get('imageName')
                             });
                         }
                     };
