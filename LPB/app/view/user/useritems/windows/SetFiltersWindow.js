@@ -45,8 +45,8 @@ Ext.define('LPB.view.user.useritems.windows.SetFiltersWindow', {
             slider = form.getForm().findField('dateslider'),
             maxValue = slider.getMaxValue;
 
-        if (filterOperator == '>') {
-            console.log(slider);
+        if (filterOperator === '>') {
+            console.log(slider.getMaxValue());
             slider.getValues();
             //slider.values= [filterValues , maxValue];
         } else {
