@@ -51,7 +51,7 @@ Ext.define('Ext.sunfield.imageField.ImagePicker', {
                             minImageHeight: 600,
                             imageProcessor: 'resources/data/image/image.php',
                             imagesStore: pwin.store,
-                            userId: pwin.userId,
+                            userId: pwin.userId
                         });
                         win.show();
                         store = Ext.getStore(pwin.store);

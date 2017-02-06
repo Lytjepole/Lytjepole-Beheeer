@@ -10,6 +10,7 @@ Ext.define('LPB.view.user.useritems.UserItemsModel', {
         userItems: {
             model: 'CalendarItem',
             autoLoad: true,
+            storeId: 'userItems',
             pageSize: 0,
             remoteFilter: true,
             remoteSort: true,
@@ -28,6 +29,60 @@ Ext.define('LPB.view.user.useritems.UserItemsModel', {
                 direction: 'ASC'
             }, {
                 property: 'endDate',
+                direction: 'ASC'
+            }]
+        },
+
+        Images: {
+            model: 'Image',
+            storeId: 'Images',
+            autoLoad: true,
+            remoteFilter: true,
+            remoteSort: true,
+            pageSize: 0,
+            filters: [{
+                property: 'ownerId',
+                operator: '=',
+                value: '{currentUser.id}'
+            }]
+        },
+
+        MruImages: {
+            model: 'Image',
+            storeId: 'MruImages',
+            autoLoad: true,
+            remoteFilter: true,
+            remoteSort: true,
+            pageSize: 18
+        },
+
+        ownGroups: {
+            model: 'Group',
+            storeId: 'ownGroups',
+            autoLoad: true,
+            pageSize: 0,
+            remoteFilter: true,
+            remoteSort: true,
+            filters: [{
+                property: 'userId',
+                operator: '=',
+                value: '{currentUser.id}'
+            }],
+            sorters: [{
+                property: 'name',
+                direction: 'ASC'
+            }]
+        },
+
+        itemLocations: {
+            model: 'Location',
+            storeId: 'itemLocations',
+            autoLoad: true,
+            pageSize: 0,
+            remoteSort: true,
+            remoteFilter: true,
+            sorters: [{
+                property: 'name',
                 direction: 'ASC'
             }]
         }

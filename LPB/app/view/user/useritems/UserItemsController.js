@@ -12,6 +12,134 @@ Ext.define('LPB.view.user.useritems.UserItemsController', {
 
     },
 
+    onAddItemBtnClick: function (btn) {
+        var win;
+
+        win = Ext.create({
+            xtype: 'adduseritemwindow',
+            userId: this.getViewModel().data.currentUser.id
+        });
+        win.show();
+        this.getView().add(win);
+        this.createTplMenu();
+    },
+
+    createTplMenu: function () {
+        var me = this;
+        var refs = me.getReferences();
+        var userId = this.getViewModel().data.currentUser.id;
+        var menu;
+        var items;
+
+        console.log(refs);
+        Ext.Ajax.request({
+            url: 'resources/data/template/template.php?action=getUserTemplates&userId=' + userId,
+            success: function (response, eOpts) {
+                items = Ext.JSON.decode(response.responseText);
+                menu = Ext.create('Ext.menu.Menu', {
+                    plain: true,
+                    listeners: {
+                        click: 'onTemplateMenuClick'
+                    }
+                })
+                Ext.Object.each(items.items, function (item, value, items) {
+                    for (i = 0;i < value.length; i++) {
+                        menu.add({text: value[i].title, value: value[i].id});
+                    }
+                });
+                refs.tplBtn.setMenu(menu);
+            }
+        });
+    },
+
+    onTemplateMenuClick: function (menu , item , e , eOpts) {
+        var me = this,
+            refs = me.getReferences(),
+            template,
+            beginDate = Ext.Date.clearTime(new Date()),
+            beginTime,
+            endTime,
+            endDate = new Date();
+
+        console.log(item.value);
+        template = new LPB.model.Template({id: item.value});
+        template.load({
+            success: function (record) {
+                beginTime = record.get('beginTime');
+                beginDate.setHours(beginTime.substring(0,2), beginTime.substring(3,5));
+                endTime = record.get('endTime');
+                endDate.setHours(endTime.substring(0,2), endTime.substring(3,5));
+
+                record.set('beginDate', beginDate);
+                record.set('endDate', endDate);
+
+                refs.additemform.loadRecord(record);
+            }
+        });
+    },
+
+    onBeforeAddItemWindowClose: function (win) {
+        var me = this,
+            refs = this.getReferences();
+
+        if (refs.additemform.isDirty()) {
+            Ext.Msg.confirm({
+                title: 'Venster sluiten?',
+                msg: 'Weet je het zeker?',
+                buttons: Ext.Msg.YESNO,
+                fn: function (btn) {
+                    if (btn === 'yes') {
+                        me.getView().remove(win);
+                        win.destroy();
+                    }
+                }
+            });
+        } else {
+            // just close
+            this.getView().remove(win);
+            win.destroy();
+        }
+        return false;
+    },
+
+    onSubmitAddItemForm: function (btn) {
+        console.log(this.getReferences());
+        var me = this,
+            refs = me.getReferences(),
+            win = refs.additemwindow,
+            store = Ext.getStore('userItems'),
+            form = refs.additemform,
+            values = form.getValues(),
+            data = form.getForm().findField('dates').getSubmitValue(),
+            count = data.getCount(),
+            item,
+            items,
+            i;
+
+        values.userId = me.getViewModel().data.currentUser.id;
+
+        if (form.isValid() && form.isDirty()) {
+            for (i = 0; i < count; i++) {
+                values.id = '';
+                values.beginDate = data.getAt(i).get('beginDate');
+                values.endDate = data.getAt(i).get('endDate');
+
+                item = Ext.create('LPB.model.CalendarItem', values);
+                items = item.copy(null);
+                store.add(items);
+            }
+        }
+
+        store.sync({
+            success: function () {
+                me.getView().remove(win);
+            },
+            failure: function () {
+                console.log(arguments);
+            }
+        });
+    },
+
     onActionHighlightClick: function (view, rowIndex, colIndex, item, e, record) {
         record.set("highlight", !record.get('highlight'));
         record.save();
@@ -54,7 +182,7 @@ Ext.define('LPB.view.user.useritems.UserItemsController', {
 
         win = Ext.create({
             xtype: 'setFiltersWindow',
-            title: 'Filters',
+            title: 'Filters instellen',
             filterValues: values,
             filterOperator: operator
         });

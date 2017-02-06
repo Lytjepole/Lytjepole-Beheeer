@@ -20,8 +20,7 @@ Ext.define('LPB.view.admin.locations.LocationsController', {
         var win = Ext.create({
             xtype: 'addlocationwindow',
             autoShow: true,
-            width: 700,
-            //userId: this.getViewModel().data.currentUser.id,
+            width: 700
         });
         this.getView().add(win);
         win.down('form').getForm().findField('userId').setValue(this.getViewModel().data.currentUser.id);

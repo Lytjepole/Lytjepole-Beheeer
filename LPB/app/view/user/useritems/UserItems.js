@@ -7,7 +7,9 @@ Ext.define('LPB.view.user.useritems.UserItems', {
     requires: [
         'LPB.view.user.useritems.UserItemsModel',
         'LPB.view.user.useritems.UserItemsController',
-        'LPB.view.user.useritems.windows.SetFiltersWindow'
+        'LPB.view.user.useritems.windows.SetFiltersWindow',
+        'LPB.view.user.useritems.windows.AddUserItemWindow',
+        'LPB.view.user.useritems.windows.EditUserItemWindow'
     ],
 
     viewModel: {
@@ -35,7 +37,8 @@ Ext.define('LPB.view.user.useritems.UserItems', {
         dock: 'top',
         items: [{
             text: 'Toevoegen',
-            iconCls: 'fa fa-plus'
+            iconCls: 'fa fa-plus',
+            handler: 'onAddItemBtnClick'
         }, {
             text: 'Wijzig',
             iconCls: 'fa fa-edit',
@@ -152,7 +155,6 @@ Ext.define('LPB.view.user.useritems.UserItems', {
         width: 150,
         items: [{
             dataIndex: 'highlight',
-            //handler: 'onActionHighlightClick',
             getClass: function (value, metadata, record, row, col, store) {
                 return record.get('highlight') ? 'x-fa fa-star' : 'x-fa fa-star-o';
             },

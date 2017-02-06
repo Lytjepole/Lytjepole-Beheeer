@@ -42,6 +42,11 @@ function getLocation($locationId, $database) {
     return mysqli_fetch_assoc($result);
 }
 
+function updateMruImages($id, $database) {
+    $sql = "UPDATE `images` SET `recentlyUsed` = NOW() WHERE `id` = '".$id."' ";
+    $database->query($sql);
+}
+
 switch ($_GET['action']) {
     case 'create':
         $rawData = file_get_contents("php://input");
@@ -84,7 +89,6 @@ switch ($_GET['action']) {
                 // set locationId, clear shortlocation
                 $shortLocation = '';
                 $locationData = getLocation($locationId, $database);
-               //print_r($locationData['name']);
             } else {
                 // clear locationId, set shortlocation
                 $locationId = 0;
@@ -107,7 +111,10 @@ switch ($_GET['action']) {
             setCategories($insertedId, $categorySelector, $database);
             if($groupSelector > 0) {setGroup($insertedId, $groupSelector, $database);}
 
+            updateMruImages($imageId, $database);
+
             $insertedItems[] = array('shortLocation'=> $shortLocation, 'name'=> $locationData['name'], 'street'=>$locationData['street'], 'number'=>$locationData['number']);
+
             // extjs flips when returning item id from php
             //$insertedItems[] = array('id'=> "$insertedId", 'shortLocation'=> $shortLocation, 'name'=> $locationData['name'], 'street'=>$locationData['street'], 'number'=>$locationData['number']);
         }

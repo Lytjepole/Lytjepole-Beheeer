@@ -46,6 +46,8 @@ Ext.define("LPB.Application", {
             jsonResponse,
             userId;
 
+        'use strict';
+
         // declare global vtypes
         Ext.apply(Ext.form.field.VTypes, {
             singleDayEventText: 'Eindtijd moet na begintijd liggen',

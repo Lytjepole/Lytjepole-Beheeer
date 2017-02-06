@@ -20,11 +20,11 @@ Ext.define('LPB.model.Template', {
         name: 'text',
         type: 'string'
     }, {
-        name: 'beginTime',
+        name: 'beginTime'
         // type: 'date',
         // dateFormat: 'H:i'
     }, {
-        name: 'endTime',
+        name: 'endTime'
         // type: 'date',
         // dateFormat: 'H:i'
     }, {

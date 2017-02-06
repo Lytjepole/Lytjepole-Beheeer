@@ -149,6 +149,8 @@ Ext.define('LPB.view.admin.items.ItemsController', {
             menu,
             submenu;
 
+        console.log('templates btn clicked!!');
+
         Ext.Ajax.request({
             url: 'resources/data/template/template.php?action=getUserTemplates',
             success: function (response, opts) {
@@ -193,7 +195,7 @@ Ext.define('LPB.view.admin.items.ItemsController', {
                 beginDate.setHours(beginTime.substring(0,2), beginTime.substring(3,5));
                 endDate = new Date();
                 endTime = record.get('endTime');
-                endDate.setHours(endTime.substring(0,2), endTime.substring(3,5))
+                endDate.setHours(endTime.substring(0,2), endTime.substring(3,5));
                 record.set('beginDate', beginDate);
                 record.set('endDate', endDate);
                 refs.additemwindow.record = record;

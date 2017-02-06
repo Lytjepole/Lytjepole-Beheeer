@@ -333,10 +333,10 @@ Ext.define('LPB.view.user.usertemplates.windows.AddTemplateUser', {
         var me = this,
             tool;
         tool = Ext.create('widget.groupeditor', {
-            userId: 174,
+            userId: localStorage.getItem('uid'),
             store: selector.store,
             selector: selector
         });
         selector.fromField.items.items[0].addTool(tool);
     }
-})
+});

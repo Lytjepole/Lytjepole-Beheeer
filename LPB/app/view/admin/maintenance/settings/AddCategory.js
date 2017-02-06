@@ -15,10 +15,10 @@ Ext.define('LPB.view.admin.maintenance.settings.AddCategory', {
             reference: 'addcategoryform',
             trackResetOnLoad: true,
             bodyPadding: 10,
-            listeners: {
-                scope: this,
-                //afterrender: this.editCategoryFormAfterRender
-            },
+            // listeners: {
+            //     scope: this,
+            //     //afterrender: this.editCategoryFormAfterRender
+            // },
             defaults: {
                 anchor: '100%',
                 labelWidth: 100
