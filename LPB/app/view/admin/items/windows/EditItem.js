@@ -373,6 +373,8 @@ Ext.define('LPB.view.admin.items.windows.EditItem', {
                             name: 'embargo',
                             fieldLabel: 'Onder embargo',
                             reference: 'embargo',
+                            inputValue: 1,
+                            uncheckedValue: 0,
                             listeners: {
                                 change: function (field) {
                                     Ext.getCmp('embargoenddate').setDisabled(!field.checked);
@@ -437,7 +439,9 @@ Ext.define('LPB.view.admin.items.windows.EditItem', {
             beginTimeField = additemform.findField('beginTime'),
             endTimeField = additemform.findField('endTime'),
             beginDateField = additemform.findField('beginDate'),
-            datesField = additemform.findField('dates');
+            datesField = additemform.findField('dates'),
+            embargoEndDate = additemform.findField('embargoEndDate'),
+            embargoEndTime = additemform.findField('embargoEndTime');
 
         additemform.loadRecord(this.record);
         this.setCategories(itemId);
@@ -475,6 +479,10 @@ Ext.define('LPB.view.admin.items.windows.EditItem', {
         });
         datesField.setValue(1);
 
+        if (record.get('embargo')) {
+            embargoEndDate.setValue(record.get('embargoEnd'));
+            embargoEndTime.setValue(record.get('embargoEnd'));
+        }
     },
     setCategories: function (id) {
         Ext.Ajax.request({

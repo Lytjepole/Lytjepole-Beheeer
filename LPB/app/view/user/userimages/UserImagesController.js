@@ -61,7 +61,7 @@ Ext.define('LPB.view.user.userimages.UserImagesController', {
             win;
 
         win = Ext.create('editimagewindowuser', {
-            title: 'Afbbeelding "' + record.get('imageName') + '" wijzigen',
+            title: 'Afbeelding "' + record.get('imageName') + '" wijzigen',
             iconCls: 'fa fa-image',
             record: record
         });

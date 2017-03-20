@@ -42,6 +42,9 @@ Ext.define('LPB.model.CalendarItem', {
         type: 'int',
         reference: 'Image'
     }, {
+        name: 'location',
+        type: 'boolean'
+    }, {
         name: 'locationId',
         type: 'int',
         reference: 'Location'

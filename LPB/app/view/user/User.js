@@ -13,7 +13,8 @@ Ext.define('LPB.view.user.User', {
         'LPB.view.user.userstats.UserStats',
         'LPB.view.user.useritems.UserItems',
         'LPB.view.user.usertemplates.UserTemplates',
-        'LPB.view.user.pages.Error404Window'
+        'LPB.view.user.pages.Error404Window',
+        'LPB.view.user.pages.UserSettings'
     ],
 
     xtype: 'usermain',
@@ -59,7 +60,9 @@ Ext.define('LPB.view.user.User', {
             hrefTarget: '_self',
             tooltip: 'See latest search'
         }, {
-            bind: '{currentUser.fullName}'
+            bind: '{currentUser.fullName}',
+            href: '#pages.usersettings',
+            hrefTarget: '_self'
         }]
     }, {
         xtype: 'mainwrap',
@@ -76,7 +79,6 @@ Ext.define('LPB.view.user.User', {
             width: 250,
             singleExpand: true,
             store: 'userTreeList',
-            //bind: '{navItems}',
             listeners: {
                 selectionchange: 'onTreelistSelectionChange'
             }

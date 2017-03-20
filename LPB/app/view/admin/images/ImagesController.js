@@ -45,13 +45,61 @@ Ext.define('LPB.view.admin.images.ImagesController', {
     },
 
     showImageEditWindow: function (record) {
+        var win;
         win = Ext.create('editimagewindow', {
+            record: record,
             title: record.get('imageName'),
             iconCls: 'fa fa-image',
-            autoShow: true,
-            width: 500,
-            height: 300
+            autoShow: true
         });
+        this.getView().add(win);
+        this.getReferences().editimageform.loadRecord(record);
+    },
+
+    onSaveImageBtnClick: function (btn) {
+        var me = this,
+            refs = me.getReferences(),
+            win = refs.editimagewindow,
+            form = refs.editimageform,
+            record,
+            values;
+
+        if (form.isValid() && form.isDirty()) {
+            record = form.getRecord();
+            values = form.getValues();
+            record.set(values);
+            record.save({
+                success: function (record, operation) {
+                    me.getView().remove(win);
+                },
+                failure: function (record, operation) {
+
+                }
+            });
+        } else {
+            me.getView().remove(win);
+        }
+    },
+
+    onEditImageWindowBeforeClose: function () {
+        var me = this,
+            refs = me.getReferences(),
+            form = refs.editimageform;
+
+        if (form.isDirty()) {
+            Ext.Msg.confirm({
+                title: 'Venster sluiten?',
+                msg: 'Venster sluiten?',
+                icon: Ext.Msg.QUESTION,
+                buttons: Ext.Msg.YESNO,
+                fn: function (btn) {
+                    if (btn === 'yes') {
+                        refs.editimagewindow.destroy();
+                    }
+                }
+            });
+            return false;
+        }
     },
 
     onImagesCardRender: function (card) {

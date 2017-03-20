@@ -30,6 +30,10 @@ Ext.define('LPB.view.user.useritems.UserItems', {
         groupHeaderTpl: '<b>{name}</b> ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})<br /> <span style="font-weight: normal; font-style: italic">{[values.rows[0].data.subtitle]}</span>'
     }],
 
+    listeners: {
+        itemdblclick: 'onItemDblClick'
+    },
+
     hideHeaders: true,
 
     dockedItems: [{
@@ -44,14 +48,15 @@ Ext.define('LPB.view.user.useritems.UserItems', {
             iconCls: 'fa fa-edit',
             bind: {
                 disabled: '{!useritems.selection}'
-            }
-
+            },
+            handler: 'onEditItemBtnClick'
         }, {
             text: 'Verwijder',
             iconCls: 'fa fa-trash',
             bind: {
                 disabled: '{!useritems.selection}'
-            }
+            },
+            handler: 'onDeleteItemBtnClick'
         }, {
             xtype: 'tbfill'
         }, {
@@ -71,8 +76,7 @@ Ext.define('LPB.view.user.useritems.UserItems', {
 
     columns: [{
         xtype: 'rownumberer',
-        width: 30,
-        height: 88
+        width: 30
     }, {
         dataIndex: 'beginDate',
         width: 200,
@@ -133,7 +137,7 @@ Ext.define('LPB.view.user.useritems.UserItems', {
         text: 'kiekeboe',
         dataIndex: 'text',
         flex: 2,
-        cellWrap: true,
+        //cellWrap: true,
         renderer: function (value, metaData, record) {
             return Ext.util.Format.ellipsis(value, 200, true);
         }

@@ -30,8 +30,9 @@ Ext.define('LPB.view.user.useritems.UserItemsController', {
         var userId = this.getViewModel().data.currentUser.id;
         var menu;
         var items;
+        var i;
 
-        console.log(refs);
+        //console.log(refs);
         Ext.Ajax.request({
             url: 'resources/data/template/template.php?action=getUserTemplates&userId=' + userId,
             success: function (response, eOpts) {
@@ -43,7 +44,7 @@ Ext.define('LPB.view.user.useritems.UserItemsController', {
                     }
                 })
                 Ext.Object.each(items.items, function (item, value, items) {
-                    for (i = 0;i < value.length; i++) {
+                    for (i = 0;i < value.length; i+=1) {
                         menu.add({text: value[i].title, value: value[i].id});
                     }
                 });
@@ -61,7 +62,6 @@ Ext.define('LPB.view.user.useritems.UserItemsController', {
             endTime,
             endDate = new Date();
 
-        console.log(item.value);
         template = new LPB.model.Template({id: item.value});
         template.load({
             success: function (record) {
@@ -73,7 +73,8 @@ Ext.define('LPB.view.user.useritems.UserItemsController', {
                 record.set('beginDate', beginDate);
                 record.set('endDate', endDate);
 
-                refs.additemform.loadRecord(record);
+                refs.additemwindow.record = record;
+                refs.additemwindow.addItemFormRendered(refs.additemform, 'tpl');
             }
         });
     },
@@ -103,7 +104,6 @@ Ext.define('LPB.view.user.useritems.UserItemsController', {
     },
 
     onSubmitAddItemForm: function (btn) {
-        console.log(this.getReferences());
         var me = this,
             refs = me.getReferences(),
             win = refs.additemwindow,
@@ -119,7 +119,7 @@ Ext.define('LPB.view.user.useritems.UserItemsController', {
         values.userId = me.getViewModel().data.currentUser.id;
 
         if (form.isValid() && form.isDirty()) {
-            for (i = 0; i < count; i++) {
+            for (i = 0; i < count; i+=1) {
                 values.id = '';
                 values.beginDate = data.getAt(i).get('beginDate');
                 values.endDate = data.getAt(i).get('endDate');
@@ -150,20 +150,97 @@ Ext.define('LPB.view.user.useritems.UserItemsController', {
         record.save();
     },
 
-    onActionEditClick: function () {
-
+    onActionEditClick: function (view, rowIndex, colIndex, item, e, record) {
+        this.showEditItemWindow(record);
     },
 
-    onActionDeleteClick: function () {
-
+    onEditItemBtnClick: function (btn) {
+        var me = this,
+            record;
+        record = me.getView().getSelectionModel().getSelection()[0];
+        this.showEditItemWindow(record);
     },
 
-    onActionCopyNewClick: function () {
+    onItemDblClick: function (grid) {
+        var me = this,
+            record;
+        record = grid.getSelectionModel().getSelection()[0];
+        this.showEditItemWindow(record);
+    },
 
+    onActionDeleteClick: function (view, rowIndex, colIndex, item, e, record) {
+        this.deleteItem(record);
+    },
+
+    onDeleteItemBtnClick: function (btn) {
+        var me = this,
+            record = me.getView().getSelectionModel().getSelection()[0];
+
+        this.deleteItem(record);
+    },
+
+    deleteItem: function (record) {
+        console.log(record);
+        Ext.Msg.confirm({
+           title: 'Item verwijdern?',
+            msg: 'Item "' + record.get('title') + '" verwijderen?',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function (btn) {
+                if (btn === 'yes') {
+                    console.log('deleting item...');
+                    record.erase();
+                }
+            }
+        });
+    },
+
+    onActionCopyNewClick: function (view, rowIndex, colIndex, item, e, record) {
+        var me = this,
+            refs = me.getReferences(),
+            win;
+
+        win = Ext.create({
+            xtype: 'adduseritemwindow',
+            record: record,
+            userId: this.getViewModel().data.currentUser.id
+        });
+        win.show();
+        me.getView().add(win);
     },
 
     showEditItemWindow: function (record) {
-        console.log(record);
+        var me = this,
+            win;
+
+        win = Ext.create({
+            xtype: 'edituseritemwindow',
+            record: record,
+            userId: this.getViewModel().data.currentUser.id,
+            title: 'Item "' + record.get('title') + '" wijzigen'
+        });
+        win.show();
+        me.getView().add(win);
+    },
+
+    onSubmitEditItemForm: function (btn) {
+        var me = this,
+            refs = me.getReferences(),
+            form = refs.edititemform,
+            record = form.getRecord(),
+            values = form.getValues(),
+            data = form.getForm().findField('dates').getSubmitValue();
+
+        if (form.isValid() && form.isDirty()) {
+            values.beginDate = data.getAt(0).get('beginDate');
+            values.endDate = data.getAt(0).get('endDate');
+            record.set(values);
+            record.save({
+                callback: function () {
+                    me.getView().remove(refs.edititemwindow);
+                }
+            });
+        }
     },
 
     showCopyAsNewWindow: function (record) {

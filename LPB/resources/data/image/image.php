@@ -203,13 +203,14 @@ switch ($_GET['action']) {
         $tmp = json_decode($rawdata);
         $data = $tmp->image;
 
-        $sql = "UPDATE `images` SET `imageName` = ?, `artist` = ? WHERE `id` = ?";
+        $sql = "UPDATE `images` SET `imageName` = ?, `artist` = ?, `ownerId` = ?  WHERE `id` = ?";
         $stmt = $database->prepare($sql);
-        $stmt->bind_param("ssi", $imageName, $artist, $id);
+        $stmt->bind_param("ssii", $imageName, $artist, $ownerId, $id);
 
         for ($i = 0; $i < count($data); $i++) {
             $imageName = $data[$i]->imageName;
             $artist = $data[$i]->artist;
+            $ownerId = $data[$i]->ownerId;
             $id = $data[$i]->id;
 
             $stmt->execute();

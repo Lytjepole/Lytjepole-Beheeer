@@ -15,6 +15,16 @@ Ext.define('LPB.view.admin.images.ImagesModel', {
             autoLoad: true
         }
         */
+        allUsers: {
+            model: 'User',
+            storeId: 'allUsers',
+            pageSize: 0,
+            autoLoad: true,
+            sorters: [{
+                property: 'fullName',
+                direction: 'ASC'
+            }]
+        }
     },
 
     data: {

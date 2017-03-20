@@ -130,18 +130,27 @@ switch ($_GET['action']) {
 
         for ($i = 0;$i < count($data); $i++) {
             $id = $data[$i]->id;
-            $title = $data[$i]->title;
-            $subtitle = $data[$i]->subtitle;
-            $text = $data[$i]->text;
+            $title = $database->real_escape_string($data[$i]->title);
+            $subtitle = $database->real_escape_string($data[$i]->subtitle);
+            $text = $database->real_escape_string($data[$i]->text);
             $beginDate = $data[$i]->beginDate;
             $endDate = $data[$i]->endDate;
-            $source = $data[$i]->source;
-            $sourceLink = $data[$i]->sourceURL;
+            $source = $database->real_escape_string($data[$i]->source);
+            $sourceLink = $database->real_escape_string($data[$i]->sourceURL);
             $userId = $data[$i]->userId;
             $imageId = $data[$i]->imageId;
+            $location = $data[$i]->location;
             $locationId = $data[$i]->locationId;
-            $shortLocation = $data[$i]->shortLocation;
-            $www = $data[$i]->www;
+            if ($location) {
+                $locationId = $data[$i]->locationId;
+                $shortLocation = '';
+            } else {
+                $location = 0;
+                $locationId = 0;
+                $shortLocation = $database->real_escape_string($data[$i]->shortLocation);
+            }
+
+            $www = $database->real_escape_string($data[$i]->www);
             $highlight = $data[$i]->highlight;
             if($highlight != 1) {$highlight = 0;}
             $published = $data[$i]->published;
@@ -150,26 +159,48 @@ switch ($_GET['action']) {
             if($permanent != 1) {$permanent = 0;}
             $embargo = $data[$i]->embargo;
             if($embargo != 1) {$embargo = 0;}
-            $embargoEnd = $data[$i]->embargoEnd;
-            if ($embargoEnd == '') {$embargoEnd = date('Y-m-d H:i:s');}
+            $embargoEndDate = $data[$i]->embargoEndDate;
+            $embargoEndTime = $data[$i]->embargoEndTime;
+            if ($embargo) {
+                $date = new DateTime($embargoEndDate);
+                $date->setTime(substr($embargoEndTime, 0, 2), substr($embargoEndTime, 3, 2));
+                $embargoDate = $date->format('Y-m-d H:i:s');
+            } else {
+                $embargoDate = date('Y-m-d H:i:s');
+            }
             $general = $data[$i]->general;
             if($general != 1) {$general = 0;}
-            $email = $data[$i]->email;
-            $phone = $data[$i]->phone;
+            $email = $database->real_escape_string($data[$i]->email);
+            $phone = $database->real_escape_string($data[$i]->phone);
             $categorySelector = $database->real_escape_string($data[$i]->categorySelector);
             $groupSelector = $database->real_escape_string($data[$i]->groupSelector);
 
             try {
-                $sql = "UPDATE `items` SET `title` = '".$title."', `subtitle` = '".$subtitle."', `text` = '".$text."', `beginDate` = '".$beginDate."', `endDate` = '".$endDate."', `source` = '".$source."', `sourceLink` = '".$sourceLink."', `userId` = '".$userId."', `imageId` = '".$imageId."', `locationId` = '".$locationId."', `shortLocation` = '".$shortLocation."', `www` = '".$www."', `highlight` = '".$highlight."', `published` = '".$published."', `permanent` = '".$permanent."', `embargo` = '".$embargo."', `embargoEnd` = '".$embargoEnd."', `general` = '".$general."', `email` = '".$email."', `phone` = '".$phone."' WHERE `id` = ".$id."";
+                $sql = "UPDATE `items` SET `title` = '".$title."', `subtitle` = '".$subtitle."', `text` = '".$text."', `beginDate` = '".$beginDate."', `endDate` = '".$endDate."', `source` = '".$source."', `sourceLink` = '".$sourceLink."', `userId` = '".$userId."', `imageId` = '".$imageId."', `location` = '".$location."', `locationId` = '".$locationId."', `shortLocation` = '".$shortLocation."', `www` = '".$www."', `highlight` = '".$highlight."', `published` = '".$published."', `permanent` = '".$permanent."', `embargo` = '".$embargo."', `embargoEnd` = '".$embargoDate."', `general` = '".$general."', `email` = '".$email."', `phone` = '".$phone."' WHERE `id` = ".$id."";
                 if ($categorySelector) {
                     setCategories($id, $categorySelector, $database);
                 }
-                if ($groupSelector) {
+                //if ($groupSelector) {
                     setGroup($id, $groupSelector, $database);
-                }
+                //}
                 $database->query($sql);
 
-                echo '{"success": true}';
+                if ($locationId) {
+                    // return location data
+                    $locationData = getLocation($locationId, $database);
+                    $locationName = $locationData['name'];
+                    $locationStreet = $locationData['street'];
+                    $locationNumber = $locationData['number'];
+                    $shortLocation = '';
+                } else {
+                    // return short location
+                    $locationName = '';
+                    $locationStreet = '';
+                    $locationNumber = '';
+                    $shortLocation = $shortLocation;
+                }
+
+                echo '{"success": true, "calendaritem": [{"id": "'.$id.'", "locationId": "'.$locationId.'", "name" : "'.$locationName.'", "street": "'.$locationStreet.'", "number": "'.$locationNumber.'", "shortLocation": "'.$shortLocation.'"}]}';
             } catch (Exception $e) {
                 echo '{"success": false, "messages": [{"calendaritem": "' . $e->getMessage() . '"}]}';
             }
@@ -243,7 +274,7 @@ switch ($_GET['action']) {
                 $filterSql = " WHERE id = '".$_GET['id']."' ";
             }
 
-            $sql = "SELECT SQL_CALC_FOUND_ROWS `id`, `title`, `subtitle`, `text`, `beginDate`, `endDate`, `source`, `sourceURL`, `userId`, `imageId`, `locationId`, `shortLocation`, `url`, `highlight`, `created`, `lastEdited`, `published`, `imagePath`, `imageName`, `artist`, `recentlyUsed`, `name`, `street`, `number`, `zip`, `city`, `phone`, `email`, `lat`, `lng`, `permanent`, `embargo`, `embargoEnd`, `general` FROM `itemsView`" . $filterSql . " GROUP BY `id` " .$sortSql. " " . $limit . "";
+            $sql = "SELECT SQL_CALC_FOUND_ROWS `id`, `title`, `subtitle`, `text`, `beginDate`, `endDate`, `source`, `sourceURL`, `userId`, `imageId`, `location`, `locationId`, `shortLocation`, `url`, `highlight`, `created`, `lastEdited`, `published`, `imagePath`, `imageName`, `artist`, `recentlyUsed`, `name`, `street`, `number`, `zip`, `city`, `phone`, `email`, `lat`, `lng`, `permanent`, `embargo`, `embargoEnd`, `general` FROM `itemsView`" . $filterSql . " GROUP BY `id` " .$sortSql. " " . $limit . "";
             $result = $database->query($sql);
             $totalQuery = 'SELECT FOUND_ROWS()';
             $totalResult = $database->query($totalQuery);

@@ -35,6 +35,7 @@ Ext.define('LPB.view.user.useritems.windows.AddUserItemWindow', {
                 },
                 items: [{
                     title: 'Tekst',
+                    allowBlank: false,
                     defaults: {
                         anchor: '100%',
                         labelWidth: 225
@@ -171,6 +172,7 @@ Ext.define('LPB.view.user.useritems.windows.AddUserItemWindow', {
                             checked: true,
                             inputValue: 1,
                             name: 'location',
+                            id: 'choiceone',
                             listeners: {
                                 change: function (field) {
                                     var form = field.up('form').getForm(),
@@ -216,7 +218,8 @@ Ext.define('LPB.view.user.useritems.windows.AddUserItemWindow', {
                             flex: 1,
                             boxWidth: 200,
                             boxLabel: 'of geef omschrijving',
-                            name: 'location'
+                            name: 'location',
+                            id: 'choicetwo'
                         }, {
                             flex: 2,
                             xtype: 'textfield',
@@ -230,6 +233,7 @@ Ext.define('LPB.view.user.useritems.windows.AddUserItemWindow', {
                     title: 'Contact',
                     items: [{
                         xtype: 'fieldset',
+                        title: 'Bellen',
                         items: [{
                             xtype: 'textfield',
                             labelWidth: 200,
@@ -415,8 +419,51 @@ Ext.define('LPB.view.user.useritems.windows.AddUserItemWindow', {
         this.callParent();
     },
 
-    addItemFormRendered: function (form) {
+    addItemFormRendered: function (form, what) {
+        var me = this,
+            record = this.record,
+            additemform = form.getForm(),
+            locationCombo = additemform.findField('locationId'),
+            multipleDays = additemform.findField('multipleDays'),
+            beginTimeField = additemform.findField('beginTime'),
+            endTimeField = additemform.findField('endTime'),
+            beginDateField = additemform.findField('beginDate'),
+            endDateField = additemform.findField('endDate');
 
+        if (record) {
+            form.loadRecord(record);
+            this.setCategories(record.get('id'), what);
+            this.setGroup(record.get('id'), what);
+
+            beginTimeField.setValue(record.get('beginDate'));
+            endTimeField.setValue(record.get('endDate'));
+
+            if (record.get('locationId')) {
+                if (!locationCombo.getStore().isLoaded()) {
+                    locationCombo.getStore().load({
+                        callback: function () {
+                            locationCombo.setValue(record.get('locationId'));
+                        }
+                    });
+                } else {
+                    locationCombo.setValue(record.get('locationId'));
+                }
+                Ext.getCmp('choiceone').setValue(true);
+
+            } else {
+                Ext.getCmp('choicetwo').setValue(true);
+            }
+
+            if (Ext.Date.diff(record.get('beginDate'), new Date(), Ext.Date.DAY) > 0) {
+                //console.log('records date before today'); // set to today
+                beginDateField.setValue(new Date());
+            }
+
+            if (Ext.Date.diff(record.get('beginDate'), record.get('endDate'), Ext.Date.DAY)) {
+                //console.log('multi');
+                multipleDays.setValue(true);
+            }
+        }
     },
 
     onGroupSelectorRendered: function (selector) {

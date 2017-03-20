@@ -88,7 +88,7 @@ Ext.define('LPB.view.user.UserController', {
     },
 
     onRouteChange: function (id) {
-        console.log('route changed');
+        console.log('route changed', id);
         this.setCurrentView(id);
     },
 
