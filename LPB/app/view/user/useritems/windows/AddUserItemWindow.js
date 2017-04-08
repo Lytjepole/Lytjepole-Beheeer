@@ -172,6 +172,7 @@ Ext.define('LPB.view.user.useritems.windows.AddUserItemWindow', {
                             checked: true,
                             inputValue: 1,
                             name: 'location',
+                            inputValue: 1,
                             id: 'choiceone',
                             listeners: {
                                 change: function (field) {
@@ -217,6 +218,7 @@ Ext.define('LPB.view.user.useritems.windows.AddUserItemWindow', {
                             xtype: 'radiofield',
                             flex: 1,
                             boxWidth: 200,
+                            inputValue: 0,
                             boxLabel: 'of geef omschrijving',
                             name: 'location',
                             id: 'choicetwo'

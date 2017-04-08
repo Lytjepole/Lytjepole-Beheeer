@@ -44,6 +44,13 @@ Ext.define('LPB.store.UserTreeList', {
             leaf: true,
             iconCls: 'right-icon x-fa fa-bar-chart',
             routeId: 'stats'
+        }, {
+            text: 'Instellingen',
+            visible: false,
+            view: 'pages.UserSettings',
+            leaf: true,
+            iconCls: 'right-icon x-fa fa-cog',
+            routeId: 'settings'
         }]
     }
 

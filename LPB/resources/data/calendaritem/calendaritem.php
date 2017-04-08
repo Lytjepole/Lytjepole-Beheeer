@@ -80,17 +80,18 @@ switch ($_GET['action']) {
             $endDate = $database->real_escape_string($data[$i]->endDate);
             $userId = $database->real_escape_string($data[$i]->userId);
             $shortLocation = $database->real_escape_string($data[$i]->shortLocation);
-            $highlight = 0;// $database->real_escape_string($data[$i]->highlight);
+            $highlight = 0;// on creation always 0
             $embargo = $database->real_escape_string($data[$i]->embargo);
             $embargoEndDate = $database->real_escape_string($data[$i]->embargoEndDate);
             $embargoEndTime = $database->real_escape_string($data[$i]->embargoEndTime);
 
             if ($location == 1) {
-                // set locationId, clear shortlocation
+                //  set locationId, clear shortlocation
                 $shortLocation = '';
                 $locationData = getLocation($locationId, $database);
             } else {
-                // clear locationId, set shortlocation
+               //  clear locationId, set shortlocation
+                $location = 0;
                 $locationId = 0;
                 $locationData = $shortLocation;
             }
@@ -102,7 +103,7 @@ switch ($_GET['action']) {
                 $embargoDate = new DateTime();
             }
 
-            $sql = "INSERT INTO `items` (`title`, `subtitle`, `text`, `beginDate`, `endDate`, `source`, `sourceLink`, `userId`, `imageId`, `locationId`, `shortLocation`, `www`, `highlight`, `created`, `published`, `permanent`, `embargo`, `embargoEnd`, `general`, `email`, `phone` ) VALUES ('".$title."', '".$subtitle."', '".$text."', '".$beginDate."', '".$endDate."', '".$source."', '".$sourceURL."', '".$userId."', '".$imageId."', '".$locationId."', '".$shortLocation."', '".$www."', '".$highlight."', NOW(), '".$published."', '".$permanent."', '".$embargo."', '".$embargoDate->format('Y-m-d H:i:s')."', '".$general."', '".$email."', '".$phone."' )";
+            $sql = "INSERT INTO `items` (`title`, `subtitle`, `text`, `beginDate`, `endDate`, `source`, `sourceLink`, `userId`, `imageId`, `locationId`, `shortLocation`, `www`, `highlight`, `created`, `published`, `permanent`, `embargo`, `embargoEnd`, `general`, `email`, `phone`, `location` ) VALUES ('".$title."', '".$subtitle."', '".$text."', '".$beginDate."', '".$endDate."', '".$source."', '".$sourceURL."', '".$userId."', '".$imageId."', '".$locationId."', '".$shortLocation."', '".$www."', '".$highlight."', NOW(), '".$published."', '".$permanent."', '".$embargo."', '".$embargoDate->format('Y-m-d H:i:s')."', '".$general."', '".$email."', '".$phone."', '".$location."' )";
 
             $database->query($sql);
             $insertedId = $database->insert_id;

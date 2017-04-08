@@ -4,6 +4,46 @@ Ext.define('LPB.view.user.pages.UserSettings', {
 
     modal: true,
     maximized: true,
-    closable: false
+    autoShow: true,
+    titleAlign: 'center',
 
+    cls: 'auth-locked-window',
+
+    layout: {
+        type: 'vbox',
+        align: 'center',
+        pack: 'center'
+    },
+
+    bind: {
+        title: '{currentUser.fullName}'
+    },
+
+    controller: 'user',
+
+    listeners: {
+        close: 'onSettingsWindowClose'
+    },
+    
+    initComponent: function () {
+        this.items = [{
+            xtype: 'form',
+            title: 'kiekeboe',
+            width: 455,
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            items: [{
+                xtype: 'label',
+                text: 'Volledige naam'
+            }, {
+                xtype: 'textfield',
+                name: 'fullName',
+                bind: '{currentUser.fullName}'
+            }]
+        }]
+
+        this.callParent();
+    }
 });

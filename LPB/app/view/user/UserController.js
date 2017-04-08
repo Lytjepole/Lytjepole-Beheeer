@@ -24,6 +24,11 @@ Ext.define('LPB.view.user.UserController', {
 
     },
 
+    onSettingsWindowClose: function (win) {
+        console.log(win);
+        window.location = "#home";
+    },
+
     onTreelistSelectionChange: function (tree, node) {
         if (node && node.get('view')) {
             this.redirectTo(node.get('routeId'));
@@ -32,6 +37,7 @@ Ext.define('LPB.view.user.UserController', {
 
     setCurrentView: function (hashTag) {
         hashTag = (hashTag || '').toLowerCase();
+
         var me = this,
             refs = me.getReferences(),
             mainCard = refs.mainCardPanel,

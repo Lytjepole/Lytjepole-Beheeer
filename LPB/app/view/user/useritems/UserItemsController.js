@@ -180,19 +180,31 @@ Ext.define('LPB.view.user.useritems.UserItemsController', {
     },
 
     deleteItem: function (record) {
-        console.log(record);
-        Ext.Msg.confirm({
-           title: 'Item verwijdern?',
-            msg: 'Item "' + record.get('title') + '" verwijderen?',
-            buttons: Ext.Msg.YESNO,
-            icon: Ext.Msg.QUESTION,
-            fn: function (btn) {
-                if (btn === 'yes') {
-                    console.log('deleting item...');
-                    record.erase();
+        console.log(record.get('endDate') < new Date());
+
+        if (record.get('endDate') < new Date()) { // enddate before now, so item is not deletable
+            // show warning
+            Ext.Msg.alert({
+                title: 'Kan item niet verwijderen',
+                msg: 'Item is geweest en kan daarom niet worden verwijderd.',
+                icon: Ext.Msg.ERROR,
+                buttons: Ext.Msg.OK
+            });
+        } else {
+            // go delete item
+            Ext.Msg.confirm({
+                title: 'Item verwijderen?',
+                msg: 'Item "' + record.get('title') + '" verwijderen?',
+                buttons: Ext.Msg.YESNO,
+                icon: Ext.Msg.QUESTION,
+                fn: function (btn) {
+                    if (btn === 'yes') {
+                        console.log('deleting item...');
+                        //record.erase();
+                    }
                 }
-            }
-        });
+            });
+        }
     },
 
     onActionCopyNewClick: function (view, rowIndex, colIndex, item, e, record) {
@@ -212,15 +224,25 @@ Ext.define('LPB.view.user.useritems.UserItemsController', {
     showEditItemWindow: function (record) {
         var me = this,
             win;
-
-        win = Ext.create({
+        if (record.get('endDate') < new Date()) {
+             // no editing possible
+            Ext.Msg.alert({
+                title: 'Kan item niet wijzigen',
+                msg: 'Item is geweest en kan daarom niet worden gewijzigd.',
+                icon: Ext.Msg.ERROR,
+                buttons: Ext.Msg.OK
+            });
+        } else {
+            // edit item
+            win = Ext.create({
             xtype: 'edituseritemwindow',
-            record: record,
-            userId: this.getViewModel().data.currentUser.id,
-            title: 'Item "' + record.get('title') + '" wijzigen'
-        });
-        win.show();
-        me.getView().add(win);
+                record: record,
+                userId: this.getViewModel().data.currentUser.id,
+                title: 'Item "' + record.get('title') + '" wijzigen'
+            });
+            win.show();
+            me.getView().add(win);
+        }
     },
 
     onSubmitEditItemForm: function (btn) {

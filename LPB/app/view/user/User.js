@@ -61,7 +61,7 @@ Ext.define('LPB.view.user.User', {
             tooltip: 'See latest search'
         }, {
             bind: '{currentUser.fullName}',
-            href: '#pages.usersettings',
+            href: '#settings',
             hrefTarget: '_self'
         }]
     }, {
