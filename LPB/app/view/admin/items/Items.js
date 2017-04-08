@@ -219,7 +219,7 @@ Ext.define('LPB.view.admin.items.Items', {
             handler: 'onActionHighlightClick'
         }, {
             getClass: function (value, metadata, record, row, col, store) {
-                return record.get('published') ? 'x-fa fa-check' : 'x-fa fa-ban';
+                return record.get('published') ? 'x-fa fa-eye' : 'x-fa fa-eye-slash';
             },
             getTip: function (value, metadata, record, row, col, store) {
                 return record.get('published') ? 'item is gepubliceerd' : 'item is niet gepubliceerd';

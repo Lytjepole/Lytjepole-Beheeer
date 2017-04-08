@@ -17,7 +17,7 @@ Ext.define('LPB.view.admin.items.ItemsController', {
         if (refs.additemform.isDirty()) {
             Ext.Msg.confirm(
                 'Venster sluiten?',
-                'weet je zeker?',
+                'weet je het zeker?',
                 function (btn) {
                     if (btn === 'yes') {
                         win.destroy();
