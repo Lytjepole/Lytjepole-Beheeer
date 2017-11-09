@@ -10,7 +10,7 @@ Ext.define('LPB.view.admin.items.Items', {
         'LPB.view.admin.items.windows.AddItem',
         'LPB.view.admin.items.windows.EditItem',
         'LPB.view.admin.items.windows.groupEditor',
-        'LPB.view.admin.items.panels.DatesGrid'  
+        'LPB.view.admin.items.panels.DatesGrid'
     ],
 
     viewModel: {

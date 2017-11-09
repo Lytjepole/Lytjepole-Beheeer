@@ -66,10 +66,18 @@ Ext.define('LPB.view.admin.items.windows.EditItem', {
                     },
                     items: [{
                         name: 'imageId',
+                        id: 'imagefield',
                         xtype: 'imagefield',
                         fieldLabel: 'Afbeelding',
                         store: 'ItemImages',
                         imagesDir: 'resources/images/items/'
+                    }, {
+                        xtype: 'mruimages',
+                        fieldLabel: 'Recente afbeeldingen',
+                        store: 'MruImages',
+                        imagesDir: 'recources/images/items/',
+                        userId: this.userId,
+                        imageFieldname: 'imagefield'
                     }]
                 }, {
                     title: 'Wanneer',

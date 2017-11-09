@@ -6,19 +6,14 @@ Ext.define('LPB.view.admin.items.ItemsModel', {
     alias: 'viewmodel.items',
 
     stores: {
-        // ItemImages: {
-        //     model: 'LPB.model.Image',
-        //     storeId: 'ItemImages',
-        //     pageSize: 0,
-        //     autoLoad: true,
-        //     remoteFilter: true
-        // },
-        // ItemLocations: {
-        //     model: 'LPB.model.Location',
-        //     storeId: 'ItemLocations',
-        //     pageSize: 0,
-        //     autoLoad: false
-        // }
+        MruImages: {
+            model: 'Image',
+            storeId: 'MruImages',
+            autoLoad: true,
+            remoteFilter: true,
+            remoteSort: true,
+            pageSize: 18
+        }
     },
 
     data: {

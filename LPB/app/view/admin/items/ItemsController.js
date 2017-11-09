@@ -33,7 +33,7 @@ Ext.define('LPB.view.admin.items.ItemsController', {
 
     onUserFilterChanged: function (combo) {
         var store = this.getView().getStore();
-        console.log(store.getFilters());
+        //console.log(store.getFilters());
         if (combo.getValue()) {
             store.filter({
                 property: 'userId',
@@ -68,7 +68,7 @@ Ext.define('LPB.view.admin.items.ItemsController', {
 
     onDateFilterReset: function (tool) {
         var refs = this.getView().getReferences();
-        console.log(refs, tool);
+        //console.log(refs, tool);
         refs.datesfilter.setValue([Ext.Date.format(Ext.Date.clearTime(new Date()), "U"), Ext.Date.format(Ext.Date.add(new Date(), Ext.Date.MONTH, 12), "U")]);
         this.onDateFilterChanged(refs.datesfilter);
     },
@@ -114,18 +114,29 @@ Ext.define('LPB.view.admin.items.ItemsController', {
         var me = this,
             refs = me.getReferences();
         record = me.getView().getSelectionModel().getSelection()[0];
-        Ext.Msg.show({
-            title: 'Item verwijderen...',
-            message: 'Item "' + record.get('title') + '" verwijderen?',
-            buttons: Ext.Msg.YESNOCANCEL,
-            icon: Ext.Msg.QUESTION,
-            fn: function (btn) {
-                if (btn === 'yes') {
-                    // do delete item
-                    record.erase();
+
+        if (record.get('endDate') < new Date()) {
+            Ext.Msg.alert({
+                title: 'Kan item niet verwijderen',
+                msg: 'Item is geweest en kan daarom niet worden verwijderd.',
+                icon: Ext.Msg.ERROR,
+                buttons: Ext.Msg.OK
+            });
+        } else {
+            Ext.Msg.show({
+                title: 'Item verwijderen...',
+                message: 'Item "' + record.get('title') + '" verwijderen?',
+                buttons: Ext.Msg.YESNOCANCEL,
+                icon: Ext.Msg.QUESTION,
+                fn: function (btn) {
+                    if (btn === 'yes') {
+                        // do delete item
+                        record.erase();
+                    }
                 }
-            }
-        });
+            });
+        }
+
     },
 
     onActionDeleteClick: function (view, rowIndex, colIndex, item, e, record) {
@@ -220,12 +231,16 @@ Ext.define('LPB.view.admin.items.ItemsController', {
     },
 
     createNewItem: function () {
-        var addItemWindow;
+        var me = this,
+            userId = me.getViewModel().data.currentUser.id,
+            addItemWindow;
+
         addItemWindow = Ext.create({
-            xtype: 'additemwindow'
+            xtype: 'additemwindow',
+            userId: userId
         });
         addItemWindow.show();
-        this.getView().add(addItemWindow);
+        me.getView().add(addItemWindow);
         this.onTemplatesBtnClick();
     },
 
@@ -272,7 +287,9 @@ Ext.define('LPB.view.admin.items.ItemsController', {
     },
 
     onEditItemBtnClick: function () {
-        this.editItem(this.getView().getSelectionModel().getSelection()[0]);
+        var record = this.getView().getSelectionModel().getSelection()[0];
+
+        this.editItem(record);
     },
 
     onItemDblClick: function (grid, item) {
@@ -282,12 +299,22 @@ Ext.define('LPB.view.admin.items.ItemsController', {
     editItem: function (record) {
         var editItemWindow;
 
-        editItemWindow = Ext.create('edititemwindow', {
-            title: 'Item "' + record.get('title') + '" wijzigen'
-        });
-        editItemWindow.record = record;
-        editItemWindow.show();
-        this.getView().add(editItemWindow);
+        if (record.get('endDate') < new Date()) {
+            Ext.Msg.alert({
+                title: 'Kan item niet wijzigen',
+                msg: 'Item is geweest en kan daarom niet worden gewijzigd.',
+                icon: Ext.Msg.ERROR,
+                buttons: Ext.Msg.OK
+            });
+        } else {
+            editItemWindow = Ext.create('edititemwindow', {
+                title: 'Item "' + record.get('title') + '" wijzigen',
+                userId: this.getViewModel().data.currentUser.id
+            });
+            editItemWindow.record = record;
+            editItemWindow.show();
+            this.getView().add(editItemWindow);
+        }
     },
 
     onSubmitEditItemForm: function () {

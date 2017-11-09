@@ -22,6 +22,7 @@ Ext.define('Ext.sunfield.mruImages.MruImages', {
         var me = this,
             store = Ext.getStore(this.store);
 
+        console.log(Ext.getStore(this.store));
         store.filter({
             property: 'ownerId',
             operator: '=',

@@ -40,11 +40,6 @@ Ext.define('LPB.view.user.useritems.UserItemsModel', {
             remoteFilter: true,
             remoteSort: true,
             pageSize: 0
-            // filters: [{
-            //     property: 'ownerId',
-            //     operator: '=',
-            //     value: '{currentUser.id}'
-            // }]
         },
 
         MruImages: {
